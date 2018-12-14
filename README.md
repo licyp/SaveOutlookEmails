@@ -51,5 +51,5 @@ Click on _'End'_, restart Outlook and try to run __SaveOutlookEmails__ again lat
 - Overlap subject: `OverlapSubject = 20` is used to left-compare email subject and file name
 - Default folder on desktop: `DefultFolder = "Desktop\eMails"`
 
-###### [VBA - Visual Basic for Applications](https://docs.microsoft.com/en-us/office/vba/api/overview/outlook)
 ###### Current version: 1.0
+###### [VBA - Visual Basic for Applications](https://docs.microsoft.com/en-us/office/vba/api/overview/outlook)
