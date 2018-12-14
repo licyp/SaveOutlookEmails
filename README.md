@@ -43,13 +43,13 @@ Click on _'End'_, restart Outlook and try to run __SaveOutlookEmails__ again lat
 - Not fully _'DRY'_, there is room for improvement.
 
 ## Configuration
-Maximum email size: `MaxItemSize = 25000000` 25MB
-Maximum number of recipients: `MaxItemTo = 250`
-Invalid characters: `* / \ : ? " % < > |`, `line feed`, `carriage return` and `horizontal tabulation`
-Overlap days: `OverlapDays = 7`
-Overlap number: `OverlapResaved = 100`
-Overlap subject: `OverlapSubject = 20` is used to left-compare email subject and file name
-Default folder on desktop: `DefultFolder = "Desktop\eMails"`
+- Maximum email size: `MaxItemSize = 25000000` 25MB
+- Maximum number of recipients: `MaxItemTo = 250`
+- Invalid characters: `* / \ : ? " % < > |`, `line feed`, `carriage return` and `horizontal tabulation`
+- Overlap days: `OverlapDays = 7`
+- Overlap number: `OverlapResaved = 100`
+- Overlap subject: `OverlapSubject = 20` is used to left-compare email subject and file name
+- Default folder on desktop: `DefultFolder = "Desktop\eMails"`
 
 ###### [VBA - Visual Basic for Applications](https://docs.microsoft.com/en-us/office/vba/api/overview/outlook)
 ###### Current version: 1.0
