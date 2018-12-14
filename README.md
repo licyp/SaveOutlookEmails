@@ -40,7 +40,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 - If connection is slow or IT limits access, then __SaveOutlookEmails__ will throw a run-time error:
 Click on _'End'_, restart Outlook and try to run __SaveOutlookEmails__ again later.
 - I am dyslexic therefore spelling mistakes are likely within the code.
-- Not fully _'DRY'_, there is a room for improvement.
+- Not fully _'DRY'_, there is room for improvement.
 
 ## Configuration
 Maximum email size: `MaxItemSize = 25000000` 25MB
