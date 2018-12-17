@@ -1,5 +1,6 @@
 # SaveOutlookEmails
 Save and backup Outlook accounts and items (emails, appointments, attachments etc.) onto local drive.
+
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 ## Purpose
