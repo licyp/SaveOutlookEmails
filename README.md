@@ -17,7 +17,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 1.	Add developer ribbon
 2.	Check macro security settings
 3.	Add vba libraries
-4.	Copy vba modules
+4.	Copy vba modules from [I'm a relative reference to a repository file](../blob/master/Code)
 5.	Add auto run to ‘this session’
 6.	Add quick lunch icon
 7.	Hide developer ribbon
