@@ -1,5 +1,6 @@
 # SaveOutlookEmails
 Save and backup Outlook accounts and items (emails, appointments, attachments etc.) onto local drive.
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 ## Purpose
 In my Outlook only the last three months of emails are available offline, the rest are archived and moved into my [Online Archive - Name@Company.com](https://support.microsoft.com/en-gb/help/291626/how-to-manage-multiple-exchange-mailbox-accounts-in-outlook) account. Even when connected to the network the archived account only shows the first 200 odd characters of an email body and no attachments are available. This means that Outlook search won’t find anything from archived account.
