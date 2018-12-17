@@ -26,3 +26,4 @@ Private Sub Userform_QueryClose(Cancel As Integer, CloseMode As Integer)
         Call CloseBackupProgressBar
     End If
 End Sub
+
