@@ -1,22 +1,6 @@
 Private Sub Application_Startup()
-'Dim lItemsCount As Double
-'Dim i As Double
-'
-'    For i = 1 To Outlook.Application.Session.Folders.Count
-'        If Outlook.Application.Session.Folders(i) = Application.Session.Accounts(1) Then
-'            Set objMainFolder = Outlook.Application.Session.Folders(i)
-'        End If
-'    Next
-'
-'    FinishAll = False
-'    lItemsCount = 0
-'    Call LoopFolders(objMainFolder, lItemsCount)
-'
-'    MsgBox lItemsCount & " items processed", vbInformation, "Count Items"
-'
     EndMessage = False
     FromNewToOld = True
     AutoRun = True
     Call BackUpOutlookFolder(True)
 End Sub
-
