@@ -66,17 +66,18 @@ Sub FileExistsInLogOrHDD()
 Dim i As Double
 Dim ItemDate As String
 Dim LogDate As String
+Dim OverlapSubjectReal As Double
 
     Set fso = New Scripting.FileSystemObject
     OutlookItemSavedAlready = False
     If AutoRun = False Then
-        If LastFoundWasAt = 0 Then
+'        If LastFoundWasAt = 0 Then
             If FromNewToOld = False Then
                 LastFoundWasAt = LBound(ArchivedFileArray, 2)
             Else
                 LastFoundWasAt = UBound(ArchivedFileArray, 2)
             End If
-        End If
+'        End If
     Else
         OutlookItemSavedAlready = fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1))
         Exit Sub
@@ -84,7 +85,13 @@ Dim LogDate As String
     
     ItemDate = TextToDateTime(ItemShortArray(0) & " ")
     
-Debug.Print "Looking for: " & ItemDate
+    If OverlapSubject > Len(ItemShortArray(1)) Then
+        OverlapSubjectReal = Len(ItemShortArray(1)) - 1
+    Else
+        OverlapSubjectReal = OverlapSubject
+    End If
+    
+'Debug.Print "Looking for: " & ItemDate
     If FromNewToOld = False Then
         For i = LastFoundWasAt To UBound(ArchivedFileArray, 2)
             If ArchivedFileArray(0, i) <> FileArrayHeading(0) Then
@@ -92,12 +99,12 @@ Debug.Print "Looking for: " & ItemDate
             Else
                 LogDate = ArchivedFileArray(0, i)
             End If
-Debug.Print "Is it this one? " & ArchivedFileArray(0, i)
+'Debug.Print "Is it this one? " & ArchivedFileArray(0, i)
             If IsDate(LogDate) Then
                 If DateValue(LogDate) = DateValue(ItemDate) And _
                     TimeValue(LogDate) = TimeValue(ItemDate) Then
-                    If Left(ReplaceIllegalCharsFileFolderName(ItemShortArray(1) & " ", ReplaceCharBy, MaxFileNameLenght, False), OverlapSubject) _
-                        = Left(ArchivedFileArray(2, i), OverlapSubject) Then
+                    If Left(ReplaceIllegalCharsFileFolderName(ItemShortArray(1) & " ", ReplaceCharBy, MaxFileNameLenght, False), OverlapSubjectReal) _
+                        = Left(ArchivedFileArray(1, i), OverlapSubjectReal) Then
                         OutlookItemSavedAlready = True
                         LastFoundWasAt = i
                         Exit For
@@ -107,12 +114,12 @@ Debug.Print "Is it this one? " & ArchivedFileArray(0, i)
         Next
     Else
         For i = LastFoundWasAt To LBound(ArchivedFileArray, 2) Step -1
-Debug.Print "Is it this one? " & ArchivedFileArray(1, i)
+'Debug.Print "Is it this one? " & ArchivedFileArray(1, i)
             If IsDate(ArchivedFileArray(1, i)) Then
                 If DateValue(ArchivedFileArray(1, i)) = DateValue(TextToDateTime(ItemShortArray(0) & " ")) And _
                     TimeValue(ArchivedFileArray(1, i)) = TimeValue(TextToDateTime(ItemShortArray(0) & " ")) Then
-                    If Left(ReplaceIllegalCharsFileFolderName(ItemShortArray(1) & " ", ReplaceCharBy, MaxFileNameLenght, False), OverlapSubject) _
-                        = Left(ArchivedFileArray(2, i), OverlapSubject) Then
+                    If Left(ReplaceIllegalCharsFileFolderName(ItemShortArray(1) & " ", ReplaceCharBy, MaxFileNameLenght, False), OverlapSubjectReal) _
+                        = Left(ArchivedFileArray(1, i), OverlapSubjectReal) Then
                         OutlookItemSavedAlready = True
                         LastFoundWasAt = i
                         Exit For
@@ -121,10 +128,10 @@ Debug.Print "Is it this one? " & ArchivedFileArray(1, i)
             End If
         Next
     End If
-Debug.Print "############# " & "FileExistsInLogOrHDD"
-Debug.Print "OutlookItem: " & ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1)
-Debug.Print "OutlookItemSavedAlready: " & OutlookItemSavedAlready
-Debug.Print "############# " & "FileExistsInLogOrHDD"
+'Debug.Print "############# " & "FileExistsInLogOrHDD"
+'Debug.Print "OutlookItem: " & ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1)
+'Debug.Print "OutlookItemSavedAlready: " & OutlookItemSavedAlready
+'Debug.Print "############# " & "FileExistsInLogOrHDD"
 End Sub
 
 

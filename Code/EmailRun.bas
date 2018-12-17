@@ -1,4 +1,4 @@
-Attribute VB_Name = "NewEmailRun_New"
+Attribute VB_Name = "EmailRun"
 'https://docs.microsoft.com/en-us/office/vba/api/overview/outlook
 Option Explicit
 
@@ -75,7 +75,7 @@ Public ItemArrayHeading As Variant
 Public FileArrayHeading As Variant
 
 Sub WipeMeClean()
-'Cleans variables (in case of previous unfinised runs)
+'Cleans variables (in case of previous unfinished runs)
     Set HDDMainFolder = Nothing
     Set HDDSubFolder = Nothing
     Set OutlookAccountFolder = ActiveOutlookAccount
@@ -209,7 +209,7 @@ BackUpMainAccount:
     Else
     End If
     
-'Is choosen folder valid folder for backup?
+'Is chosen folder valid folder for backup?
     MsgBoxButtons = vbOKOnly + vbExclamation + vbDefaultButton1
     MsgBoxTitle = "Backup Outlook Folder"
     MsgBoxText = "Selected '" & OutlookCurrentFolder & "' folder is not valid for backup."
@@ -280,7 +280,7 @@ Dim i As Double
                 If EndCode = 1 Or EndCode = 2 Then
                     Exit Sub
                 End If
-'Check file existance
+'Check file existence
                 Call AddToShortItemArray(FolderLoop, FolderLoop.Items(i))
                 Call FileExistsInLogOrHDD
                 If OutlookItemSavedAlready = True And ForceResave = False Then
@@ -302,21 +302,21 @@ Dim i As Double
                         If ErrorSkipCode <> "" Then
                             ItemArray(1) = ErrorSkipCode
                         Else
-'Add succsesfull file save to log file
+'Add successful file save to log file
                             Call LogFileAddLine(ItemShortArray)
-                            OutlookItemCurrentCountTodayInFolder = i
-                            OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
-'Update progress bar
-                            ProgressNowTime = Now()
-                            Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
-                            DoEvents
                         End If
                     End If
                 End If
+                OutlookItemCurrentCountTodayInFolder = i
+                OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
+'Update progress bar
+                ProgressNowTime = Now()
+                Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
+                DoEvents
 'Debug.Print "SavedAlreadyCounter: " & SavedAlreadyCounter
             Next
         Else
-            For i = FolderLoop.Items.Count To 1 Step -1 'from new to old
+            For i = FolderLoop.Items.Count To 1 Step -1 'new old to old
 'Checks autorun overlap and stop scanning Outlook folder
                 If ForceResave = False And AutoRun = True And _
                     SavedAlreadyCounter > OverlapResaved And Abs(SavedAlreadyCurrent - SavedAlreadyFisrt) > OverlapDays Then
@@ -326,7 +326,7 @@ Dim i As Double
                 If EndCode = 1 Or EndCode = 2 Then
                     Exit Sub
                 End If
-'Check file existance
+'Check file existence
                 Call AddToShortItemArray(FolderLoop, FolderLoop.Items(i))
                 Call FileExistsInLogOrHDD
                 If OutlookItemSavedAlready = True And ForceResave = False Then
@@ -348,17 +348,17 @@ Dim i As Double
                         If ErrorSkipCode <> "" Then
                             ItemArray(1) = ErrorSkipCode
                         Else
-'Add succsesfull file save to log file
+'Add successful file save to log file
                             Call LogFileAddLine(ItemShortArray)
-                            OutlookItemCurrentCountTodayInFolder = i
-                            OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
-'Update progress bar
-                            ProgressNowTime = Now()
-                            Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
-                            DoEvents
                         End If
                     End If
                 End If
+                OutlookItemCurrentCountTodayInFolder = i
+                OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
+'Update progress bar
+                ProgressNowTime = Now()
+                Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
+                DoEvents
 'Debug.Print "SavedAlreadyCounter: " & SavedAlreadyCounter
             Next
         End If
@@ -379,7 +379,7 @@ Dim i As Double
 End Sub
 
 Sub SaveOutlookItem(OutlookItemInput, ReSave As Boolean, ItemData)
-'Saves Outlook item if not exists or force resave=true; other attrbites are used from ItemArray related to selected Outlook item
+'Saves Outlook item if not exists or force resave=true; other attributes are used from ItemArray related to selected Outlook item
 Dim OutlookApp As Outlook.Application
 Dim ObjectInspector As Outlook.Inspector
 Dim ItemToBeSaved As Object
