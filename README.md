@@ -16,13 +16,13 @@ __SaveOutlookEmails__ saves accounts from Outlook onto a desktop folder.
 Outlook's folder structure is kept the same and files are named with date-time prefix and shortened subject.
 
 ## Install ___insert gifs or other images with lot of text what to do___
-1.	Add developer ribbon
-2.	Check macro security settings
-3.	Add vba libraries
-4.	Copy vba modules from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.0.zip)
-5.	Add auto run to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
-6.	Add quick lunch icon
-7.	Hide developer ribbon
+1 Add _Developer_ ribbon
+2 Check _Macro Settings_ in _Trust Canter_
+3 Add _Microsoft Scripting Runtime_ in _VBA editor_
+4 Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.0.zip)
+5 Add auto run code to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
+6 Add _Quick Access_ icon
+7 Hide _Developer_ ribbon
 
 ## Process
 - Outlook folders are validated against `InvalidFolders` while Outlook items against `ValidItems`.
