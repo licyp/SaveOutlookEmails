@@ -17,12 +17,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 
 ## Install ___Still to add: Insert gifs or other images with lot of text what to do___
 1. Add _Developer_ ribbon
-
-
-![Alt Text](https://github.com/licyp/SaveOutlookEmails/blob/master/1AddDeveloperRibbon.gif)
-
-
-![](https://github.com/licyp/SaveOutlookEmails/blob/master/Images/1%20Add%20Developer%20ribbon.gif)
+![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/1%20Add%20Developer%20ribbon.gif)
 
 
 2. Check _Macro Settings_ in _Trust Canter_
