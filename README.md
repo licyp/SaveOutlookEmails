@@ -15,18 +15,6 @@ __SaveOutlookEmails__ saves accounts from Outlook onto a desktop folder.
 
 Outlook's folder structure is kept the same and files are named with date-time prefix and shortened subject.
 
-## Install ___Still to add: Insert gifs or other images with lot of text what to do___
-1. Add _Developer_ ribbon
-
-![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/1%20Add%20Developer%20ribbon.gif)
-
-2. Check _Macro Settings_ in _Trust Canter_
-3. Add _Microsoft Scripting Runtime_ in _VBA editor_
-4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.0.zip)
-5. Add auto run code to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
-6. Add _Quick Access_ icon
-7. Hide _Developer_ ribbon
-
 ## Process
 - Outlook folders are validated against `InvalidFolders` while Outlook items against `ValidItems`.
 - Date and subject are checked whether the item has been saved before, if not then email validity checked in details.
@@ -39,6 +27,18 @@ Outlook's folder structure is kept the same and files are named with date-time p
 ## Efficiency
 - When auto run __SaveOutlookEmails__ items on local drive are checked using `fso.FileExists`. When the number of already saved emails reaches `OverlapResaved` and timeframe of already saved emails is over `OverlapDays` then scanning emails will stop. Autorun won’t open emails as recent items are part of the offline Outlook database, including attachments.
 - When manually run on selected folders 'file exists' check is based on the _Log_ file. This check is a simple loop though the log array. After an email has been found then the next loop will start from where the previous has been found to shorten the loop time.
+
+## Install ___Still to add: Insert gifs or other images with lot of text what to do___
+1. Add _Developer_ ribbon
+
+![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/1%20Add%20Developer%20ribbon.gif)
+
+2. Check _Macro Settings_ in _Trust Canter_
+3. Add _Microsoft Scripting Runtime_ in _VBA editor_
+4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.0.zip)
+5. Add auto run code to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
+6. Add _Quick Access_ icon
+7. Hide _Developer_ ribbon
 
 ## Warnings
 - To save archived emails with full body and attachments, they must be opened and then saved. This will happen automatically causing the ___screen to flicker___ and ___limit the use of the computer___.
