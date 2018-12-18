@@ -1,4 +1,3 @@
-Attribute VB_Name = "EmailRun"
 'https://docs.microsoft.com/en-us/office/vba/api/overview/outlook
 Option Explicit
 
@@ -74,6 +73,8 @@ Public AutoRun As Boolean
 Public ItemArrayHeading As Variant
 Public FileArrayHeading As Variant
 Public LinkToGitHub As String
+Public UndeliverableError As String
+Public DateError As Boolean
 
 Sub WipeMeClean()
 'Cleans variables (in case of previous unfinished runs)
@@ -272,7 +273,8 @@ Dim i As Double
     If ValidOutlookFolder(FolderLoop) = True Then
         OutlookFolderCurrentCountToday = OutlookFolderCurrentCountToday + 1
         If FromNewToOld = False Then
-            For i = 1 To FolderLoop.Items.Count 'from old to new
+            For i = 3000 To FolderLoop.Items.Count 'from old to new
+                DateError = False
 'Checks autorun overlap and stop scanning Outlook folder
                 If ForceResave = False And AutoRun = True And _
                     SavedAlreadyCounter > OverlapResaved And Abs(SavedAlreadyCurrent - SavedAlreadyFisrt) > OverlapDays Then
@@ -288,10 +290,12 @@ Dim i As Double
                 If OutlookItemSavedAlready = True And ForceResave = False Then
                     SaveResult = "Saved Already"
                     SavedAlreadyCounter = SavedAlreadyCounter + 1
-                    If SavedAlreadyCounter = 1 Then
-                        SavedAlreadyFisrt = TextToDateTime(ItemShortArray(0) & " ")
-                    Else
-                        SavedAlreadyCurrent = TextToDateTime(ItemShortArray(0) & " ")
+                    If DateError = False Then
+                        If SavedAlreadyCounter = 1 Then
+                            SavedAlreadyFisrt = TextToDateTime(ItemShortArray(0) & " ")
+                        Else
+                            SavedAlreadyCurrent = TextToDateTime(ItemShortArray(0) & " ")
+                        End If
                     End If
                 Else
                     SavedAlreadyCounter = 0
@@ -319,6 +323,7 @@ Dim i As Double
             Next
         Else
             For i = FolderLoop.Items.Count To 1 Step -1 'new old to old
+                DateError = False
 'Checks autorun overlap and stop scanning Outlook folder
                 If ForceResave = False And AutoRun = True And _
                     SavedAlreadyCounter > OverlapResaved And Abs(SavedAlreadyCurrent - SavedAlreadyFisrt) > OverlapDays Then
@@ -334,10 +339,12 @@ Dim i As Double
                 If OutlookItemSavedAlready = True And ForceResave = False Then
                     SaveResult = "Saved Already"
                     SavedAlreadyCounter = SavedAlreadyCounter + 1
-                    If SavedAlreadyCounter = 1 Then
-                        SavedAlreadyFisrt = TextToDateTime(ItemShortArray(0) & " ")
-                    Else
-                        SavedAlreadyCurrent = TextToDateTime(ItemShortArray(0) & " ")
+                    If DateError = False Then
+                        If SavedAlreadyCounter = 1 Then
+                            SavedAlreadyFisrt = TextToDateTime(ItemShortArray(0) & " ")
+                        Else
+                            SavedAlreadyCurrent = TextToDateTime(ItemShortArray(0) & " ")
+                        End If
                     End If
                 Else
                     SavedAlreadyCounter = 0
@@ -469,4 +476,3 @@ End If
 'Debug.Print SavePathName & SaveFileName
 'Debug.Print "############# " & "SaveOutlookItem"
 End Sub
-
