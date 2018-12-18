@@ -15,7 +15,7 @@ __SaveOutlookEmails__ saves accounts from Outlook onto a desktop folder.
 
 Outlook's folder structure is kept the same and files are named with date-time prefix and shortened subject.
 
-## Install ___insert gifs or other images with lot of text what to do___
+## Install ___Still to add: Insert gifs or other images with lot of text what to do___
 1. Add _Developer_ ribbon
 2. Check _Macro Settings_ in _Trust Canter_
 3. Add _Microsoft Scripting Runtime_ in _VBA editor_
