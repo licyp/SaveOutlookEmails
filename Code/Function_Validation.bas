@@ -1,4 +1,3 @@
-Attribute VB_Name = "Function_Validation"
 Option Explicit
 'These are the used validations
 
@@ -67,20 +66,26 @@ Dim i As Double
 Dim ItemDate As String
 Dim LogDate As String
 Dim OverlapSubjectReal As Double
-
+    
     Set fso = New Scripting.FileSystemObject
     OutlookItemSavedAlready = False
     If AutoRun = False Then
-'        If LastFoundWasAt = 0 Then
+        If LastFoundWasAt = 0 Then
             If FromNewToOld = False Then
                 LastFoundWasAt = LBound(ArchivedFileArray, 2)
             Else
                 LastFoundWasAt = UBound(ArchivedFileArray, 2)
             End If
-'        End If
+        End If
     Else
         OutlookItemSavedAlready = fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1))
         Exit Sub
+    End If
+    
+    If ItemShortArray(0) = "" Then
+            OutlookItemSavedAlready = True
+            DateError = True
+            Exit Sub
     End If
     
     ItemDate = TextToDateTime(ItemShortArray(0) & " ")
@@ -93,7 +98,7 @@ Dim OverlapSubjectReal As Double
     
 'Debug.Print "Looking for: " & ItemDate
     If FromNewToOld = False Then
-        For i = LastFoundWasAt To UBound(ArchivedFileArray, 2)
+        For i = LastFoundWasAt + 1 To UBound(ArchivedFileArray, 2)
             If ArchivedFileArray(0, i) <> FileArrayHeading(0) Then
                 LogDate = TextToDateTime(ArchivedFileArray(0, i) & " ")
             Else
@@ -107,13 +112,13 @@ Dim OverlapSubjectReal As Double
                         = Left(ArchivedFileArray(1, i), OverlapSubjectReal) Then
                         OutlookItemSavedAlready = True
                         LastFoundWasAt = i
-                        Exit For
+                        Exit Sub
                     End If
                 End If
             End If
         Next
     Else
-        For i = LastFoundWasAt To LBound(ArchivedFileArray, 2) Step -1
+        For i = LastFoundWasAt - 1 To LBound(ArchivedFileArray, 2) Step -1
 'Debug.Print "Is it this one? " & ArchivedFileArray(1, i)
             If IsDate(ArchivedFileArray(1, i)) Then
                 If DateValue(ArchivedFileArray(1, i)) = DateValue(TextToDateTime(ItemShortArray(0) & " ")) And _
@@ -122,17 +127,26 @@ Dim OverlapSubjectReal As Double
                         = Left(ArchivedFileArray(1, i), OverlapSubjectReal) Then
                         OutlookItemSavedAlready = True
                         LastFoundWasAt = i
-                        Exit For
+                        Exit Sub
                     End If
                 End If
             End If
         Next
     End If
+    
+    If fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1)) = False Then
+        If FromNewToOld = False Then
+            LastFoundWasAt = LBound(ArchivedFileArray, 2)
+        Else
+            LastFoundWasAt = UBound(ArchivedFileArray, 2)
+        End If
+    Else
+        OutlookItemSavedAlready = fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1))
+        Exit Sub
+    End If
+
 'Debug.Print "############# " & "FileExistsInLogOrHDD"
 'Debug.Print "OutlookItem: " & ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1)
 'Debug.Print "OutlookItemSavedAlready: " & OutlookItemSavedAlready
 'Debug.Print "############# " & "FileExistsInLogOrHDD"
 End Sub
-
-
-
