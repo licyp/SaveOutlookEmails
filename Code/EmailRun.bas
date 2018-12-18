@@ -273,7 +273,7 @@ Dim i As Double
     If ValidOutlookFolder(FolderLoop) = True Then
         OutlookFolderCurrentCountToday = OutlookFolderCurrentCountToday + 1
         If FromNewToOld = False Then
-            For i = 3000 To FolderLoop.Items.Count 'from old to new
+            For i = 1 To FolderLoop.Items.Count 'from old to new
                 DateError = False
 'Checks autorun overlap and stop scanning Outlook folder
                 If ForceResave = False And AutoRun = True And _
