@@ -19,7 +19,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 1. Add _Developer_ ribbon
 
 
-![Alt Text](https://github.com/licyp/SaveOutlookEmails/tree/master/images/1 Add Developer ribbon.gif)
+![Alt Text](https://github.com/licyp/SaveOutlookEmails/tree/master/images/1AddDeveloperRibbon.gif)
 
 
 2. Check _Macro Settings_ in _Trust Canter_
