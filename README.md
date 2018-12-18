@@ -21,6 +21,9 @@ Outlook's folder structure is kept the same and files are named with date-time p
 ![1 Add Developer ribbon(https://github.com/licyp/SaveOutlookEmails/tree/master/images/1 Add Developer ribbon.gif)
 Format: ![1 Add Developer ribbon](https://github.com/licyp/SaveOutlookEmails/tree/master/images/1 Add Developer ribbon.gif)
 
+
+<kbd><img title="Add Developer ribbon" src="https://github.com/licyp/SaveOutlookEmails/tree/master/images/1 Add Developer ribbon.gif"></kbd><br/>
+
 2. Check _Macro Settings_ in _Trust Canter_
 3. Add _Microsoft Scripting Runtime_ in _VBA editor_
 4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.0.zip)
