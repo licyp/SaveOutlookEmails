@@ -19,7 +19,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 1.	Add developer ribbon
 2.	Check macro security settings
 3.	Add vba libraries
-4.	Copy vba modules from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails.zip)
+4.	Copy vba modules from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.0.zip)
 5.	Add auto run to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
 6.	Add quick lunch icon
 7.	Hide developer ribbon
