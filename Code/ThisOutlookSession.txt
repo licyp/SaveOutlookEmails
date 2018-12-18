@@ -1,6 +1,0 @@
-Private Sub Application_Startup()
-    EndMessage = False
-    FromNewToOld = True
-    AutoRun = True
-    Call BackUpOutlookFolder(True)
-End Sub
