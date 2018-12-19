@@ -24,11 +24,11 @@ Outlook's folder structure is kept the same and files are named with date-time p
 - Subject dynamically shortened to fit into full path limit (255 characters on Windows).
 - All successfully saved emails are added to __Log.txt__
 
-## Efficiency
+## Features
 - When auto run __SaveOutlookEmails__ items on local drive are checked using `fso.FileExists`. When the number of already saved emails reaches `OverlapResaved` and timeframe of already saved emails is over `OverlapDays` then scanning emails will stop. Autorun won’t open emails as recent items are part of the offline Outlook database, including attachments.
 - When manually run on selected folders 'file exists' check is based on the _Log_ file. This check is a simple loop though the log array. After an email has been found then the next loop will start from where the previous has been found to shorten the loop time.
 
-## Install ___Still to add: Insert gifs or other images with lot of text what to do___
+## Install
 1. Add _Developer_ ribbon
 
 ![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/1%20Add%20Developer%20ribbon.gif)
