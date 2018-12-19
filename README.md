@@ -10,10 +10,12 @@ My solution to this problem is to save all emails from all accounts onto my desk
 
 ## Solution
 __SaveOutlookEmails__ saves accounts from Outlook onto a desktop folder.
+![ProgressBar](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/ProgressBar.jpg)
 - Keep offline emails up-to-date date: autorun __SaveOutlookEmails__ when Outlook starts (at start of Outlook _Enable Macros_ when prompted with _'Microsoft Office has identified potential security concerns.'_)
 - Save archived accounts: run __SaveOutlookEmails__ on selected folder (will take a while, run it at lunch time or at night, see more under _Warnings_)
 
 Outlook's folder structure is kept the same and files are named with date-time prefix and shortened subject.
+![Folder](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/Folder.jpg)
 
 ## Process
 - Outlook folders are validated against `InvalidFolders` while Outlook items against `ValidItems`.
