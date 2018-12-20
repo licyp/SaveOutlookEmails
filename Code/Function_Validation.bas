@@ -142,6 +142,7 @@ Dim OverlapSubjectReal As Double
         End If
     Else
         OutlookItemSavedAlready = fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1))
+        Call LogFileAddLine(ItemShortArray)
         Exit Sub
     End If
 
