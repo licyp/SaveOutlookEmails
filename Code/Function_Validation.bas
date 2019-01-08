@@ -1,3 +1,4 @@
+Attribute VB_Name = "Function_Validation"
 Option Explicit
 'These are the used validations
 
