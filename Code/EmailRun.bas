@@ -1,3 +1,4 @@
+Attribute VB_Name = "EmailRun"
 'https://docs.microsoft.com/en-us/office/vba/api/overview/outlook
 Option Explicit
 
@@ -171,9 +172,26 @@ End Sub
 
 Sub QuickAccessSaveEmails()
 'Sub to be used on QuickLunch
+Dim MsgBoxTitle As String
+Dim MsgBoxButtons As String
+Dim MsgBoxText As String
+Dim MsgBoxResponse As Double
     EndMessage = True
     FromNewToOld = False
     AutoRun = False
+'Reset log file?
+    MsgBoxButtons = vbYesNo + vbExclamation + vbDefaultButton1
+    MsgBoxTitle = "Reset Log File"
+    MsgBoxText = "Do you want to reset log file?" & vbNewLine & vbNewLine & _
+        "It will speed up scanning already saved files;" & vbNewLine & _
+        "only needs doing when scan is slow."
+    
+    MsgBoxResponse = MsgBox(MsgBoxText, MsgBoxButtons, MsgBoxTitle)
+    If MsgBoxResponse = 6 Then
+        Call RebuildLogFile
+    Else
+    End If
+    
     Call BackUpOutlookFolder(AutoRun)
 End Sub
 

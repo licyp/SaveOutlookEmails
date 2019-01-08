@@ -645,3 +645,65 @@ Dim ArrayColumnSize As Double
 'Debug.Print "############# " & "ReadHDDInAsArray"
 End Sub
 
+Sub RebuildLogFile(Optional Filename As String)
+'Reads log file into array sort it by date and resave
+Dim i As Long
+Dim Where As String
+Dim TempArray As Variant
+Dim NewLine As Variant
+Dim Row As Double
+Dim Col As Double
+    
+    
+    Call WipeMeClean
+    Call SetConfig
+    If Filename = Empty Then
+        Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+    Else
+        Where = Filename
+    End If
+    
+    Call SetBackupPgogressBarData
+    Call ReadHDDInAsArray(Where)
+    Call QuickSort2(ArchivedFileArray, 1, 0)
+       
+    For i = UBound(ArchivedFileArray, 2) To 1 Step -1
+        If IsNumeric(Left(ArchivedFileArray(0, i), 1)) = False Then
+            ReDim Preserve ArchivedFileArray(UBound(ArchivedFileArray, 1), UBound(ArchivedFileArray, 2) - 1)
+        Else
+            GoTo ReSaveFile
+        End If
+    Next
+    
+ReSaveFile:
+     TempArray = ArchivedFileArray
+    ArchivedFileArray = Empty
+    
+    ReDim NewLine(UBound(TempArray, 1))
+    Debug.Print UBound(NewLine)
+
+    For Col = LBound(TempArray, 2) To UBound(TempArray, 2)
+        For Row = LBound(TempArray, 1) To UBound(TempArray, 1)
+             NewLine(Row) = TempArray(Row, Col)
+        Next
+        Call AddToHDDArray(NewLine)
+    Next
+    
+    Call LogHDDFileInOneVertical(Where)
+    Unload BackupBar
+    Call WipeMeClean
+'Debug.Print "############# " & "RebuildLogFile"
+'Debug.Print "UBound(ArchivedFileArray, 1): " & UBound(ArchivedFileArray, 1)
+'Debug.Print "UBound(ArchivedFileArray, 2): " & UBound(ArchivedFileArray, 2)
+'Debug.Print "############# " & "RebuildLogFile"
+'Dim i As Double
+'Dim j As Double
+'    For i = LBound(ArchivedFileArray, 2) To UBound(ArchivedFileArray, 2)
+'        Debug.Print "                                                              New Line"
+'        For j = LBound(ArchivedFileArray, 1) To UBound(ArchivedFileArray, 1)
+'            Debug.Print ArchivedFileArray(j, i)
+'        Next
+'    Next
+'Debug.Print "############# " & "RebuildLogFile"
+End Sub
+
