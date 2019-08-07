@@ -84,8 +84,8 @@ End Function
 
 Function TextToDateTime(TextToDateTimeInput As String)
 'Converts 'YYYY*MM*DD*hhmmss' (from file name or log file) to date and time values
-TextToDateTime = DateSerial(Mid(TextToDateTimeInput, 1, 4), Mid(TextToDateTimeInput, 6, 2), Mid(TextToDateTimeInput, 9, 2)) + _
-    TimeSerial(Mid(TextToDateTimeInput, 12, 2), Mid(TextToDateTimeInput, 14, 2), Mid(TextToDateTimeInput, 16, 2))
+TextToDateTime = DateSerial(Mid(TextToDateTimeInput, 1, 4) * 1, Mid(TextToDateTimeInput, 6, 2) * 1, Mid(TextToDateTimeInput, 9, 2) * 1) + _
+    TimeSerial(Mid(TextToDateTimeInput, 12, 2) * 1, Mid(TextToDateTimeInput, 14, 2) * 1, Mid(TextToDateTimeInput, 16, 2) * 1)
 'Debug.Print "############# " & "TextToDateTime"
 'Debug.Print "TextToDateTimeInput: " & TextToDateTimeInput
 'Debug.Print "TextToDateTime: " & TextToDateTime

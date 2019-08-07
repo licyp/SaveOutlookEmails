@@ -31,6 +31,8 @@ Dim CleanItemName As String
 Dim i As Double
 Dim ClassCheckChar As Double
     
+    On Error GoTo NetworkError
+    
     Set OLFolder = OutlookFolderInput
     Set OLItem = OutlookItemInput
     ClassCheckChar = 8
@@ -258,6 +260,11 @@ NotValid:
         OLItemType, OLItemTypeValid, OLItemSize, OLItemSizeValid, _
         OLItemToCount, OLItemToCountValid, _
         HDDFolderPath, HDDItemValidLenght)
+        
+NetworkError:
+If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
+    MsgBox "Hmmm..., AddToItemArray"
+End If
 'Debug.Print "############# " & "AddToItemArray"
 'Debug.Print "OutlookFolderInput: " & OutlookFolderInput
 'Debug.Print "OutlookItemInput: " & OutlookItemInput
@@ -298,6 +305,8 @@ Dim HDDFolderPath As String
 Dim CleanItemName As String
 Dim i As Double
 Dim ClassCheckChar As Double
+
+    On Error GoTo NetworkError
     
     Set OLFolder = OutlookFolderInput
     Set OLItem = OutlookItemInput
@@ -334,6 +343,11 @@ Dim ClassCheckChar As Double
     CleanItemName = ReplaceIllegalCharsFileFolderName(OLItemTitle, ReplaceCharBy, MaxFileNameLenght, False) & ".msg"
 
     ItemShortArray = Array(OLItemDate, CleanItemName, HDDFolderPath)
+    
+NetworkError:
+If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
+    MsgBox "Hmmm..., AddToShortItemArray"
+End If
 'Debug.Print "############# " & "AddToShortItemArray"
 'Debug.Print "OutlookFolderInput: " & OutlookFolderInput
 'Debug.Print "OutlookItemInput: " & OutlookItemInput
@@ -432,20 +446,38 @@ Sub LogFileClose()
 'Debug.Print "############# " & "LogFileClose"
 End Sub
 
-Sub BuildHDDArray(FolderToCheck As String, Filename As String)
+Sub BuildHDDArray(Optional FolderToCheck As String, Optional Filename As String)
 'Build initial log file of already saved Outlook items
+Dim What As String
+Dim Where As String
+
+    Call WipeMeClean
+    Call SetConfig
+
+    If Filename = Empty Then
+        Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+    Else
+        Where = Filename
+    End If
+
+    If FolderToCheck = Empty Then
+        What = DefultBackupLocation '& "\"
+    Else
+        What = FolderToCheck
+    End If
 
     Call SetBackupPgogressBarData
-    Call HDDFolderItemCount(FolderToCheck)
-    Call HDDItemToArray(FolderToCheck)
-    Call LogHDDFileInOneVertical(Filename)
-    Call ReadHDDInAsArray(Filename)
+    Call HDDFolderItemCount(What)
+    Call HDDItemToArray(What)
+    Call RebuildLogFile
     Unload BackupBar
 
 'Debug.Print "############# " & "BuildHDDArray"
 'Debug.Print "FolderToCheck: " & FolderToCheck
-'Debug.Print "FileName: " & FileName
+'Debug.Print "FileName: " & Filename
 'Debug.Print "UBound(ArchivedFileArray, 2): " & UBound(ArchivedFileArray, 2)
+'Debug.Print "HDDFolderCount: " & HDDFolderCount
+'Debug.Print "HDDFileCount: " & HDDFileCount
 'Debug.Print "############# " & "BuildHDDArray"
 End Sub
 
@@ -469,7 +501,7 @@ Dim i As Double
             HDDFileCountToday = HDDFileCountToday + 1
             HDDFileName = HDDFile.Name
             If Len(HDDFileName) > 21 And IsNumeric(Left(HDDFileName, 2)) = True Then
-                HDDDate = TextToDateTime(HDDFileName)
+                HDDDate = Left(HDDFileName, 17) 'TextToDateTime(HDDFileName)
                 HDDSubject = Mid(HDDFileName, 21, 9999)
                 FileArray = Array(HDDDate, HDDSubject, FolderLoop)
                 Call AddToHDDArray(FileArray)
@@ -544,7 +576,7 @@ Dim FileNumber As Double
     FileNumber = FreeFile
     Where = Filename
     Open Where For Output Access Write As #FileNumber
-   
+    
     HDDFileCount = UBound(ArchivedFileArray, 2) + 1
     For Columns = LBound(ArchivedFileArray, 2) To UBound(ArchivedFileArray, 2)
         WholeLine = ""
@@ -653,20 +685,27 @@ Dim TempArray As Variant
 Dim NewLine As Variant
 Dim Row As Double
 Dim Col As Double
-    
-    
-    Call WipeMeClean
-    Call SetConfig
-    If Filename = Empty Then
-        Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+   
+    If IsEmpty(ArchivedFileArray) Then
+        Call WipeMeClean
+        Call SetConfig
+        If Filename = Empty Then
+            Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+        Else
+            Where = Filename
+        End If
+        Call SetBackupPgogressBarData
+        Call ReadHDDInAsArray(Where)
     Else
-        Where = Filename
+        If Filename = Empty Then
+            Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+        Else
+            Where = Filename
+        End If
     End If
     
-    Call SetBackupPgogressBarData
-    Call ReadHDDInAsArray(Where)
     Call QuickSort2(ArchivedFileArray, 1, 0)
-       
+
     For i = UBound(ArchivedFileArray, 2) To 1 Step -1
         If IsNumeric(Left(ArchivedFileArray(0, i), 1)) = False Then
             ReDim Preserve ArchivedFileArray(UBound(ArchivedFileArray, 1), UBound(ArchivedFileArray, 2) - 1)
@@ -674,13 +713,13 @@ Dim Col As Double
             GoTo ReSaveFile
         End If
     Next
-    
+
 ReSaveFile:
-     TempArray = ArchivedFileArray
+    TempArray = ArchivedFileArray
     ArchivedFileArray = Empty
-    
+
     ReDim NewLine(UBound(TempArray, 1))
-    Debug.Print UBound(NewLine)
+'    Debug.Print UBound(NewLine)
 
     For Col = LBound(TempArray, 2) To UBound(TempArray, 2)
         For Row = LBound(TempArray, 1) To UBound(TempArray, 1)
@@ -707,3 +746,90 @@ ReSaveFile:
 'Debug.Print "############# " & "RebuildLogFile"
 End Sub
 
+Sub LogLastItemChecked(Filename As String)
+'Create file with a date of item last checked
+Dim Where As String
+Dim WholeLine As String
+    FileNumber = FreeFile
+    Where = Filename
+    WholeLine = LastItemCheckedDate
+    Open Where For Output Access Write As #FileNumber
+    Print #FileNumber, WholeLine
+    Close #FileNumber
+'Debug.Print "############# " & LogLastItemChecked
+'Debug.Print "FileName: " & FileName
+'Debug.Print "LastItemCheckedDate: " & LastItemCheckedDate
+'Debug.Print "############# " & LogLastItemChecked
+End Sub
+
+Sub ReadLastItemDateLog(Filename As String)
+'Reads last item date log file and sets LastItemCheckedDate
+Dim Where As String
+Dim WholeLine As String
+    Set fso = New Scripting.FileSystemObject
+    FileNumber = FreeFile
+    Where = Filename
+    If fso.FileExists(Where) Then
+        Open Where For Input As #FileNumber
+        Do Until EOF(1)
+            Line Input #FileNumber, WholeLine
+            LastItemCheckedDate = WholeLine
+        Loop
+        Close #FileNumber
+    End If
+'Debug.Print "############# " & "ReadLastItemDateLog"
+'Debug.Print "FileName: " & FileName
+'Debug.Print "LastItemCheckedDate: " & LastItemCheckedDate
+'Debug.Print "############# " & "ReadLastItemDateLog"
+End Sub
+
+Sub AddToShortItemDate(OutlookFolderInput As Outlook.MAPIFolder, OutlookItemInput) 'As Outlook.MailItem)
+'Creates ShortDateArray for Outlook item
+Dim OLFolder As Outlook.MAPIFolder
+Dim OLItem As Object 'Outlook.MailItem
+Dim OLItemDate As String
+Dim OLItemType As String
+Dim ClassCheckChar As Double
+Dim i As Double
+
+    On Error GoTo NetworkError
+    
+    Set OLFolder = OutlookFolderInput
+    Set OLItem = OutlookItemInput
+    ClassCheckChar = 8
+
+    OLItemType = OLItem.MessageClass 'Class
+
+    Select Case Left(OLItem.MessageClass, ClassCheckChar)
+        Case Left("IPM.Appointment", ClassCheckChar) 'Appointment
+'Debug.Print "RecurrenceState: " & OLItem.RecurrenceState
+            OLItemDate = OLItem.Start
+        Case Left("IPM.Note", ClassCheckChar) 'Mail
+            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Schedule.Meeting.Resp.Tent", ClassCheckChar), _
+            Left("IPM.Schedule.Meeting.Resp.Pos", ClassCheckChar), _
+            Left("IPM.Schedule.Meeting.Resp.Neg", ClassCheckChar), _
+            Left("IPM.Schedule.Meeting.Request", ClassCheckChar), _
+            Left("IPM.Schedule.Meeting.Canceled", ClassCheckChar) 'Meeting
+            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.StickyNote", ClassCheckChar) 'Note
+            OLItemDate = Format(OLItem.LastModificationTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OLItem.LastModificationTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Task", ClassCheckChar) 'Task
+            OLItemDate = Format(OLItem.StartDate, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OLItem.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Else
+    End Select
+
+    ItemDateOnly = TextToDateTime(OLItemDate)
+    
+NetworkError:
+If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
+    MsgBox "Hmmm..., AddToShortItemDateArray"
+End If
+'Debug.Print "############# " & "AddToShortItemDateArray"
+'Debug.Print "UBound(ItemShortArray): " & UBound(ItemShortArray)
+'Debug.Print "############# " & "AddToShortItemDateArray"
+End Sub

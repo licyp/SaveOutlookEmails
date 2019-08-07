@@ -1,6 +1,6 @@
 Attribute VB_Name = "Function_Sort"
 Option Explicit
-' Code by Ellis Dee from http://www.vbforums.com/showthread.php?473677-VB6-Sorting-algorithms-(sort-array-sorting-arrays)&p=2909260#post2909260
+'http://www.vbforums.com/showthread.php?473677-VB6-Sorting-algorithms-(sort-array-sorting-arrays)&p=2909260#post2909260
 ' Sort a 2-dimensional array on either dimension
 ' Omit plngLeft & plngRight; they are used internally during recursion
 ' Sample usage to sort on column 4
