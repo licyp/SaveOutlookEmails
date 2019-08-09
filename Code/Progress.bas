@@ -82,9 +82,9 @@ Dim TimeToGo
     TimeToGo = (OutlookItemCount - OutlookItemCurrentCountToday) * (ProgressNowTime - ProgressStartTime) / OutlookItemCurrentCountToday
 
     If TimeToGo <= 1 Then
-        TimeToGo = Format(TimeToGo, "hh:nn:ss", vbUseSystemDayOfWeek, vbUseSystem)
+        TimeToGo = Format(TimeToGo, "hh:mm:ss", vbUseSystemDayOfWeek, vbUseSystem)
     Else
-        TimeToGo = Format(TimeToGo, "dd hh:nn:ss", vbUseSystemDayOfWeek, vbUseSystem)
+        TimeToGo = Format(TimeToGo, "dd hh:mm:ss", vbUseSystemDayOfWeek, vbUseSystem)
     End If
 
     With BackupBar.Footer
@@ -150,9 +150,9 @@ Dim TimeToGo
     TimeToGo = (HDDFileCount - HDDFileCountToday) * (ProgressNowTime - ProgressStartTime) / HDDFileCountToday
 
     If TimeToGo <= 1 Then
-        TimeToGo = Format(TimeToGo, "hh:nn:ss", vbUseSystemDayOfWeek, vbUseSystem)
+        TimeToGo = Format(TimeToGo, "hh:mm:ss", vbUseSystemDayOfWeek, vbUseSystem)
     Else
-        TimeToGo = Format(TimeToGo, "dd hh:nn:ss", vbUseSystemDayOfWeek, vbUseSystem)
+        TimeToGo = Format(TimeToGo, "dd hh:mm:ss", vbUseSystemDayOfWeek, vbUseSystem)
     End If
 
     With BackupBar.Footer

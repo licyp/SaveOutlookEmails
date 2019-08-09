@@ -28,6 +28,7 @@ Public OverlapSubject As Double
 
 Public DefultBackupLocation As String
 Public DefultBackupLocationLog As String
+Public LastSavedItemDateLog As String
 Public InvalidFolders As Variant
 Public ValidItems As Variant
 Public ArchivedArray As Variant
@@ -76,6 +77,8 @@ Public FileArrayHeading As Variant
 Public LinkToGitHub As String
 Public UndeliverableError As String
 Public DateError As Boolean
+Public LastItemCheckedDate As Double
+Public ItemDateOnly As Double
 
 Sub WipeMeClean()
 'Cleans variables (in case of previous unfinished runs)
@@ -124,6 +127,7 @@ Sub SetConfig()
     SaveItemsToHDD = True
     ForceResave = False
     LogFileSum = "Log of Saved Outlook Items"
+    LastSavedItemDateLog = "LastCheckedItemDate"
     LinkToGitHub = "https://github.com/licyp/SaveOutlookEmails"
 
 'https://docs.microsoft.com/en-us/office/vba/api/outlook.oldefaultfolders
@@ -161,8 +165,10 @@ Sub SetConfig()
         "Recipients Count", "Recipients Validity", _
         "Path on Drive", "Path Validity")
     FileArrayHeading = Array("Date", "Subject", "Path")
+    UndeliverableError = "Undeliverable_"
     
     Call CreateHDDFolder(DefultBackupLocationLog)
+    Call ReadLastItemDateLog(DefultBackupLocationLog & "\" & LastSavedItemDateLog & ".txt")
 '    If fso.FileExists(DefultBackupLocationLog & "\" & LogFileSum & ".txt") = False Then
 '        Call BuildHDDArray(DefultBackupLocation, DefultBackupLocationLog & "\" & LogFileSum & ".txt")
 '    End If
@@ -176,6 +182,8 @@ Dim MsgBoxTitle As String
 Dim MsgBoxButtons As String
 Dim MsgBoxText As String
 Dim MsgBoxResponse As Double
+    Call WipeMeClean
+    Call SetConfig
     EndMessage = True
     FromNewToOld = False
     AutoRun = False
@@ -188,7 +196,7 @@ Dim MsgBoxResponse As Double
     
     MsgBoxResponse = MsgBox(MsgBoxText, MsgBoxButtons, MsgBoxTitle)
     If MsgBoxResponse = 6 Then
-        Call RebuildLogFile
+        Call BuildHDDArray
     Else
     End If
     
@@ -254,18 +262,31 @@ BackUpMainAccount:
     
     Select Case EndCode
         Case 1
+            Unload BackupBar
             MsgBox "Cancelled"
         Case 2
+            Unload BackupBar
             MsgBox "Red cross"
         Case Else
             If EndMessage = False Then
+                Unload BackupBar
             Else
+                Unload BackupBar
+                If AutoRun = False Then
+                    Call WipeMeClean
+                    Call SetConfig
+                    Call SetBackupPgogressBarData
+                    Call ReadHDDInAsArray(DefultBackupLocationLog & "\" & LogFileSum & ".txt")
+                    Call RebuildLogFile
+                End If
                 MsgBox "All done"
             End If
     End Select
-
+    
+    If AutoRun = False Then
+        Call LogLastItemChecked(DefultBackupLocationLog & "\" & LastSavedItemDateLog & ".txt")
+    End If
     Call WipeMeClean
-    Unload BackupBar
     
 'Debug.Print "############# " & "BackUpOutlookFolder"
 'Debug.Print "OutlookAccountFolder: " & OutlookAccountFolder
@@ -286,12 +307,48 @@ Sub LoopOutlookFolders(LoopOutlookFoldersInput As Outlook.MAPIFolder, SaveItem A
 Dim FolderLoop As Outlook.MAPIFolder
 Dim SubFolderLoop As Outlook.MAPIFolder
 Dim i As Double
-        
+Dim k As Double
+Dim iShortCut As Double
+Dim iShortCutStep As Double
+
     Set FolderLoop = LoopOutlookFoldersInput
     If ValidOutlookFolder(FolderLoop) = True Then
         OutlookFolderCurrentCountToday = OutlookFolderCurrentCountToday + 1
         If FromNewToOld = False Then
-            For i = 1 To FolderLoop.Items.Count 'from old to new
+'Add shortcut########################################################################################
+            If FolderLoop.Items.Count > 100 And ForceResave = False And AutoRun = False Then
+                iShortCutStep = 1
+                HDDFileCount = 100
+                For k = 1 To 100 - iShortCutStep Step iShortCutStep
+                    HDDFileCountToday = k
+                    Call AddToShortItemDate(FolderLoop, FolderLoop.Items(Round(FolderLoop.Items.Count / 100 * k)))
+'Debug.Print Round(FolderLoop.Items.Count / 100 * k) & " at : " & k
+                    For i = 1 To UBound(ArchivedFileArray, 2)
+                        If ArchivedFileArray(0, i) = Format(ItemDateOnly, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                                Format(ItemDateOnly, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem) Then
+                            iShortCut = k
+                            ProgressNowTime = Now()
+                            Call UpdateHDDProgressBar(FolderLoop, " ", "Check already saved items")
+                            DoEvents
+                        End If
+                    Next
+                    If k > iShortCut Then
+                        iShortCut = Round(FolderLoop.Items.Count / 100 * (iShortCut - iShortCutStep))
+                        GoTo ShortCut
+                    End If
+                Next
+        End If
+ShortCut:
+            Unload BackupBar
+            Call SetBackupPgogressBarData
+            If iShortCut <= 0 Then
+                i = 1
+            Else
+                i = iShortCut
+                OutlookItemCurrentCountToday = i - 1
+            End If
+'Add shortcut########################################################################################
+            For i = i To FolderLoop.Items.Count 'from old to new
                 DateError = False
 'Checks autorun overlap and stop scanning Outlook folder
                 If ForceResave = False And AutoRun = True And _
@@ -304,6 +361,9 @@ Dim i As Double
                 End If
 'Check file existence
                 Call AddToShortItemArray(FolderLoop, FolderLoop.Items(i))
+                If Left(ItemShortArray(1), Len(UndeliverableError)) = UndeliverableError Then
+                    GoTo NextItemON
+                End If
                 Call FileExistsInLogOrHDD
                 If OutlookItemSavedAlready = True And ForceResave = False Then
                     SaveResult = "Saved Already"
@@ -334,6 +394,7 @@ Dim i As Double
                 OutlookItemCurrentCountTodayInFolder = i
                 OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
 'Update progress bar
+NextItemON:
                 ProgressNowTime = Now()
                 Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
                 DoEvents
@@ -353,6 +414,9 @@ Dim i As Double
                 End If
 'Check file existence
                 Call AddToShortItemArray(FolderLoop, FolderLoop.Items(i))
+                If Left(ItemShortArray(1), Len(UndeliverableError)) = UndeliverableError Then
+                    GoTo NextItemNO
+                End If
                 Call FileExistsInLogOrHDD
                 If OutlookItemSavedAlready = True And ForceResave = False Then
                     SaveResult = "Saved Already"
@@ -383,6 +447,7 @@ Dim i As Double
                 OutlookItemCurrentCountTodayInFolder = i
                 OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
 'Update progress bar
+NextItemNO:
                 ProgressNowTime = Now()
                 Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
                 DoEvents
