@@ -18,16 +18,16 @@ Outlook's folder structure is kept the same and files are named with date-time p
 ![Folder](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/Folder.jpg)
 
 ## Process
-- Outlook folders are validated against `InvalidFolders` while Outlook items against `ValidItems`.
+- Outlook folders are validated against `Invalid_Folders` while Outlook items against `Valid_Items`.
 - Date and subject are checked whether the item has been saved before, if not then email validity checked in details.
-- When `OLItem.MessageClass` ends with any words defined in `ArchivedArray` (in my case ends with _'EAS'_, my [email archive client](https://en.wikipedia.org/wiki/Enterprise_Archive_Solution_(EAS)), if it is different in your cases update `ArchivedArray` in _Config_) emails will be opened and then saved to get the full body and attachments.
+- When `OLItem.MessageClass` ends with any words defined in `Archived_Array` (in my case ends with _'EAS'_, my [email archive client](https://en.wikipedia.org/wiki/Enterprise_Archive_Solution_(EAS)), if it is different in your cases update `Archived_Array` in _Config_) emails will be opened and then saved to get the full body and attachments.
 - Size and number of recipients are limited (see _Config_).
 - Outlook folder names and email subjects are cleaned for invalid characters.
 - Subject dynamically shortened to fit into full path limit (255 characters on Windows).
 - All successfully saved emails are added to __Log.txt__
 
 ## Features
-- When auto run __SaveOutlookEmails__ items on local drive are checked using `fso.FileExists`. When the number of already saved emails reaches `OverlapResaved` and timeframe of already saved emails is over `OverlapDays` then scanning emails will stop. Autorun won’t open emails as recent items are part of the offline Outlook database, including attachments.
+- When auto run __SaveOutlookEmails__ items on local drive are checked using `fso.FileExists`. When the number of already saved emails reaches `Overlap_Resaved` and timeframe of already saved emails is over `Overlap_Days` then scanning emails will stop. Autorun won’t open emails as recent items are part of the offline Outlook database, including attachments.
 - When manually run on selected folders 'file exists' check is based on the _Log_ file. This check is a simple loop though the log array. After an email has been found then the next loop will start from where the previous has been found to shorten the loop time.
 - It has been tested on Windows 7 and Windows 10, Outlook 2013 and Outlook 2016 versions.
 
@@ -66,13 +66,13 @@ Click on _'End'_, restart Outlook and try to run __SaveOutlookEmails__ again lat
 - Not fully _'DRY'_, there is room for improvement.
 
 ## Configuration
-- Maximum email size: `MaxItemSize = 25000000` 25MB
-- Maximum number of recipients: `MaxItemTo = 250`
+- Maximum email size: `Max_Item_Size = 25000000` 25MB
+- Maximum number of recipients: `Max_Item_To = 250`
 - Invalid characters: `* / \ : ? " % < > |`, `line feed`, `carriage return` and `horizontal tabulation`
-- Overlap days: `OverlapDays = 7`
-- Overlap number: `OverlapResaved = 100`
-- Overlap subject: `OverlapSubject = 20` is used to left-compare email subject and file name
-- Default folder on desktop: `DefultFolder = "Desktop\eMails"`
+- Overlap days: `Overlap_Days = 7`
+- Overlap number: `Overlap_Resaved = 100`
+- Overlap subject: `Overlap_Subject = 20` is used to left-compare email subject and file name
+- Default folder on desktop: `Defult_Folder = "Desktop\eMails"`
 
-###### Current version: 1.3
+###### Current version: 1.5
 ###### [VBA - Visual Basic for Applications](https://docs.microsoft.com/en-us/office/vba/api/overview/outlook)
