@@ -37,7 +37,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 
 2. Check _Macro Settings_ in _Trust Canter_
 
-![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/2%20Check%20Macro%20Settings.gif)
+![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/2%20Check%20Macro%20Setting.gif)
 
 3. Add _Microsoft Scripting Runtime_ in _VBA editor_
 
