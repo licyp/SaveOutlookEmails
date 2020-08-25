@@ -1,57 +1,55 @@
-Attribute VB_Name = "Function_HDD"
 Option Explicit
 'These are to create folders on local drive
 
 Public fso As Scripting.FileSystemObject ' add MS scripting Runtime
 
-Sub CreateHDDFolderForOutlookFolder(CreateHDDFolderForOutlookFolderInput As Outlook.MAPIFolder)
+Sub Create_HDD_Folder_For_Outlook_Folder(Create_HDD_Folder_For_Outlook_Folder_Input As Outlook.MAPIFolder)
 'Checks existence of folder on HDD of the selected Outlook folder; if doesn't exist call sub to create one
-Dim FolderLoop As Outlook.MAPIFolder
-Dim SubFolderLoop As Outlook.MAPIFolder
-    Set FolderLoop = CreateHDDFolderForOutlookFolderInput
-    If ValidOutlookFolder(FolderLoop) = True Then
-        Call CreateHDDFolder(DefultBackupLocation & "\" & CleanOutlookFullPathName(FolderLoop))
+Dim Folder_Loop As Outlook.MAPIFolder
+Dim Sub_Folder_Loop As Outlook.MAPIFolder
+    Set Folder_Loop = Create_HDD_Folder_For_Outlook_Folder_Input
+    If Valid_Outlook_Folder(Folder_Loop) = True Then
+        Call Create_HDD_Folder(Default_Backup_Location & "\" & Clean_Outlook_Full_Path_Name(Folder_Loop))
     Else
     End If
 'Process all folders and subfolders recursively
-    If FolderLoop.Folders.Count Then
-       For Each SubFolderLoop In FolderLoop.Folders
-           Call CreateHDDFolderForOutlookFolder(SubFolderLoop)
+    If Folder_Loop.Folders.Count Then
+       For Each Sub_Folder_Loop In Folder_Loop.Folders
+           Call Create_HDD_Folder_For_Outlook_Folder(Sub_Folder_Loop)
        Next
     End If
-'Debug.Print "############# " & "CreateHDDFolderForOutlookFolder"
-'Debug.Print "CreateHDDFolderForOutlookFolderInput: " & CreateHDDFolderForOutlookFolderInput
-'Debug.Print "############# " & "CreateHDDFolderForOutlookFolder"
+'Debug.Print "############# " & "Create_HDD_Folder_For_Outlook_Folder"
+'Debug.Print "Create_HDD_Folder_For_Outlook_Folder_Input: " & Create_HDD_Folder_For_Outlook_Folder_Input
+'Debug.Print "############# " & "Create_HDD_Folder_For_Outlook_Folder"
 End Sub
 
-Sub CreateHDDFolder(CreateHDDFolderInput As String)
+Sub Create_HDD_Folder(Create_HDD_Folder_Input As String)
 'Creates folder on HDD if doesn't exist
-Dim HDDFolderLoop As Scripting.Folder
-Dim FolderNameTest As String
-Dim FolderNameTestRoot As String
+Dim HDD_Folder_Loop As Scripting.Folder
+Dim Folder_Name_Test As String
+Dim Folder_Name_Test_Root As String
 Dim i As Double
     Set fso = New Scripting.FileSystemObject
-    FolderNameTest = CreateHDDFolderInput
-    If fso.FolderExists(FolderNameTest) = False Then
-        i = InStr(10, FolderNameTest, "\", 1)
-        FolderNameTestRoot = Left(FolderNameTest, i)
-        While fso.FolderExists(FolderNameTest) = False
-            i = InStr(i, FolderNameTest, "\", 1)
+    Folder_Name_Test = Create_HDD_Folder_Input
+    If fso.FolderExists(Folder_Name_Test) = False Then
+        i = InStr(10, Folder_Name_Test, "\", 1)
+        Folder_Name_Test_Root = Left(Folder_Name_Test, i)
+        While fso.FolderExists(Folder_Name_Test) = False
+            i = InStr(i, Folder_Name_Test, "\", 1)
             If i = 0 Or i = 1 Then
-                FolderNameTestRoot = FolderNameTest
+                Folder_Name_Test_Root = Folder_Name_Test
             Else
-                FolderNameTestRoot = Left(FolderNameTest, i)
+                Folder_Name_Test_Root = Left(Folder_Name_Test, i)
             End If
-            If fso.FolderExists(FolderNameTestRoot) = False Then
-                MkDir FolderNameTestRoot
+            If fso.FolderExists(Folder_Name_Test_Root) = False Then
+                MkDir Folder_Name_Test_Root
             End If
             i = i + 1
         Wend
     End If
     Set fso = Nothing
-    Set HDDFolderLoop = Nothing
-'Debug.Print "############# " & "CreateHDDFolder"
-'Debug.Print "CreateHDDFolderInput: " & CreateHDDFolderInput
-'Debug.Print "############# " & "CreateHDDFolder"
+    Set HDD_Folder_Loop = Nothing
+'Debug.Print "############# " & "Create_HDD_Folder"
+'Debug.Print "Create_HDD_Folder_Input: " & Create_HDD_Folder_Input
+'Debug.Print "############# " & "Create_HDD_Folder"
 End Sub
-
