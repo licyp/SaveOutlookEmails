@@ -1,835 +1,834 @@
-Attribute VB_Name = "Function_Log"
 Option Explicit
 'These are creating and handling arrays and log files
 
 Public fso As Scripting.FileSystemObject ' add MS scripting Runtime
 
-Sub AddToItemArray(OutlookFolderInput As Outlook.MAPIFolder, OutlookItemInput) 'As Outlook.MailItem)
-'Creates ArrayLine for Outlook item with attributes to be validated and with statuses
+Sub Add_To_Item_Array(Outlook_Folder_Input As Outlook.MAPIFolder, Outlook_Item_Input) 'As Outlook.MailItem)
+'Creates Array_Line for Outlook item with attributes to be validated and with statuses
 Dim Status As String
-Dim ErrorType As String
-Dim OLFolder As Outlook.MAPIFolder
-Dim OLFolderTypeValid As Boolean
-Dim OLItemInFolderCount As Double
-Dim OLItem As Object 'Outlook.MailItem
-Dim OLItemTitle As String
-Dim OLItemDate As String
-Dim OLItemUnRead As Boolean
-Dim OLItemTitleShort As String
-Dim OLItemType As String
-Dim OLItemTypeValid As Boolean
-Dim OLItemSize As Double
-Dim OLItemSizeValid As Boolean
-Dim OLItemFrom As String
-Dim OLItemTo As String
-Dim OLItemToCount As Double
-Dim OLItemToCountValid As Boolean
-Dim HDDFolderPath As String
-Dim HDDItemValidLenght As Boolean
-Dim FullItemPath As String
-Dim CleanItemName As String
+Dim Error_Type As String
+Dim OL_Folder As Outlook.MAPIFolder
+Dim OL_Folder_Type_Valid As Boolean
+Dim OL_Item_In_Folder_Count As Double
+Dim OL_Item As Object 'Outlook.MailItem
+Dim OL_Item_Title As String
+Dim OL_Item_Date As String
+Dim OL_Item_Unread As Boolean
+Dim OL_Item_Title_Short As String
+Dim OL_Item_Type As String
+Dim OL_Item_Type_Valid As Boolean
+Dim OL_Item_Size As Double
+Dim OL_Item_Size_Valid As Boolean
+Dim OL_Item_From As String
+Dim OL_Item_To As String
+Dim OL_Item_To_Count As Double
+Dim OL_Item_To_Count_Valid As Boolean
+Dim HDD_Folder_Path As String
+Dim HDD_Item_Valid_Length As Boolean
+Dim Full_Item_Path As String
+Dim Clean_Item_Name As String
 Dim i As Double
-Dim ClassCheckChar As Double
+Dim Class_Check_Char As Double
     
     On Error GoTo NetworkError
     
-    Set OLFolder = OutlookFolderInput
-    Set OLItem = OutlookItemInput
-    ClassCheckChar = 8
+    Set OL_Folder = Outlook_Folder_Input
+    Set OL_Item = Outlook_Item_Input
+    Class_Check_Char = 8
     
-    OLFolderTypeValid = ValidOutlookFolder(OLFolder)
+    OL_Folder_Type_Valid = Valid_Outlook_Folder(OL_Folder)
 'Check validity
-    If OLFolderTypeValid = False Then
-        If ErrorType = "" Then
-            ErrorType = "Invalid Folder"
+    If OL_Folder_Type_Valid = False Then
+        If Error_Type = "" Then
+            Error_Type = "Invalid Folder"
         Else
-            ErrorType = ErrorType & "; " & "Invalid Folder"
+            Error_Type = Error_Type & "; " & "Invalid Folder"
         End If
     End If
 
-    OLItemInFolderCount = OLFolder.Items.Count
-    HDDFolderPath = DefultBackupLocation & "\" & CleanOutlookFullPathName(OLFolder) & "\"
-    OLItemTypeValid = ValidOutlookItem(OLItem)
-    OLItemTitle = OLItem.Subject
-    OLItemSize = OLItem.Size
-    OLItemType = OLItem.MessageClass 'Class
+    OL_Item_In_Folder_Count = OL_Folder.Items.Count
+    HDD_Folder_Path = Default_Backup_Location & "\" & Clean_Outlook_Full_Path_Name(OL_Folder) & "\"
+    OL_Item_Type_Valid = Valid_Outlook_Item(OL_Item)
+    OL_Item_Title = OL_Item.Subject
+    OL_Item_Size = OL_Item.Size
+    OL_Item_Type = OL_Item.MessageClass 'Class
     
-    Select Case Left(OLItem.MessageClass, ClassCheckChar)
-        Case Left("IPM.Appointment", ClassCheckChar) 'Appointment
-'Debug.Print "RecurrenceState: " & OLItem.RecurrenceState
-            OLItemType = "Appointment"
-            OLItemDate = Format(OLItem.Start, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.Start, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-            OLItemUnRead = OLItem.UnRead
-            OLItemFrom = OLItem.Organizer
-            OLItemToCount = OLItem.Recipients.Count
-            If OLItemToCount = 0 Then
-                OLItemTo = "-"
+    Select Case Left(OL_Item.MessageClass, Class_Check_Char)
+        Case Left("IPM.Appointment", Class_Check_Char) 'Appointment
+'Debug.Print "RecurrenceState: " & OL_Item.RecurrenceState
+            OL_Item_Type = "Appointment"
+            OL_Item_Date = Format(OL_Item.Start, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.Start, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+            OL_Item_Unread = OL_Item.Unread
+            OL_Item_From = OL_Item.Organizer
+            OL_Item_To_Count = OL_Item.Recipients.Count
+            If OL_Item_To_Count = 0 Then
+                OL_Item_To = "-"
             Else
-                If OLItemToCount > MaxItemTo Then
-                    For i = 1 To MaxItemTo
+                If OL_Item_To_Count > Max_Item_To Then
+                    For i = 1 To Max_Item_To
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 Else
-                    For i = 1 To OLItemToCount
+                    For i = 1 To OL_Item_To_Count
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 End If
             End If
-        Case Left("IPM.Note", ClassCheckChar) 'Mail
-            OLItemType = "Mail"
-            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-            OLItemUnRead = OLItem.UnRead
-            OLItemFrom = OLItem.SenderName
-            OLItemToCount = OLItem.Recipients.Count
-            If OLItemToCount = 0 Then
-                OLItemTo = "-"
+        Case Left("IPM.Note", Class_Check_Char) 'Mail
+            OL_Item_Type = "Mail"
+            OL_Item_Date = Format(OL_Item.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+            OL_Item_Unread = OL_Item.Unread
+            OL_Item_From = OL_Item.SenderName
+            OL_Item_To_Count = OL_Item.Recipients.Count
+            If OL_Item_To_Count = 0 Then
+                OL_Item_To = "-"
             Else
-                If OLItemToCount > MaxItemTo Then
-                    For i = 1 To MaxItemTo
+                If OL_Item_To_Count > Max_Item_To Then
+                    For i = 1 To Max_Item_To
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 Else
-                    For i = 1 To OLItemToCount
+                    For i = 1 To OL_Item_To_Count
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 End If
             End If
-        Case Left("IPM.Schedule.Meeting.Resp.Tent", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Resp.Pos", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Resp.Neg", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Request", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Canceled", ClassCheckChar) 'Meeting
-            OLItemType = "Meeting"
-            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-            OLItemUnRead = OLItem.UnRead
-            OLItemFrom = OLItem.SenderName
-            OLItemToCount = OLItem.Recipients.Count
-            If OLItemToCount = 0 Then
-                OLItemTo = "-"
+        Case Left("IPM.Schedule.Meeting.Resp.Tent", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Resp.Pos", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Resp.Neg", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Request", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Canceled", Class_Check_Char) 'Meeting
+            OL_Item_Type = "Meeting"
+            OL_Item_Date = Format(OL_Item.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+            OL_Item_Unread = OL_Item.Unread
+            OL_Item_From = OL_Item.SenderName
+            OL_Item_To_Count = OL_Item.Recipients.Count
+            If OL_Item_To_Count = 0 Then
+                OL_Item_To = "-"
             Else
-                If OLItemToCount > MaxItemTo Then
-                    For i = 1 To MaxItemTo
+                If OL_Item_To_Count > Max_Item_To Then
+                    For i = 1 To Max_Item_To
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 Else
-                    For i = 1 To OLItemToCount
+                    For i = 1 To OL_Item_To_Count
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 End If
             End If
-        Case Left("IPM.StickyNote", ClassCheckChar) 'Note
-            OLItemType = "Note"
-            OLItemDate = Format(OLItem.LastModificationTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.LastModificationTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.Task", ClassCheckChar) 'Task
-            OLItemType = "Task"
-            OLItemDate = Format(OLItem.StartDate, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-            OLItemUnRead = OLItem.UnRead
-            OLItemFrom = OLItem.Owner
-            OLItemToCount = OLItem.Recipients.Count
-            If OLItemToCount = 0 Then
-                OLItemTo = "-"
+        Case Left("IPM.StickyNote", Class_Check_Char) 'Note
+            OL_Item_Type = "Note"
+            OL_Item_Date = Format(OL_Item.LastModificationTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.LastModificationTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Task", Class_Check_Char) 'Task
+            OL_Item_Type = "Task"
+            OL_Item_Date = Format(OL_Item.StartDate, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+            OL_Item_Unread = OL_Item.Unread
+            OL_Item_From = OL_Item.Owner
+            OL_Item_To_Count = OL_Item.Recipients.Count
+            If OL_Item_To_Count = 0 Then
+                OL_Item_To = "-"
             Else
-                If OLItemToCount > MaxItemTo Then
-                    For i = 1 To MaxItemTo
+                If OL_Item_To_Count > Max_Item_To Then
+                    For i = 1 To Max_Item_To
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 Else
-                    For i = 1 To OLItemToCount
+                    For i = 1 To OL_Item_To_Count
                         If i = 1 Then
-                            OLItemTo = OLItem.Recipients(i)
+                            OL_Item_To = OL_Item.Recipients(i)
                         Else
-                            OLItemTo = OLItemTo & ", " & OLItem.Recipients(i)
+                            OL_Item_To = OL_Item_To & ", " & OL_Item.Recipients(i)
                         End If
                     Next
                 End If
             End If
         Case Else
-            OLItemTypeValid = False
+            OL_Item_Type_Valid = False
     End Select
 'Check validity
-    If OLItemTypeValid = False Then
-        If ErrorType = "" Then
-            ErrorType = "Invalid Item"
+    If OL_Item_Type_Valid = False Then
+        If Error_Type = "" Then
+            Error_Type = "Invalid Item"
         Else
-            ErrorType = ErrorType & "; " & "Invalid Item"
+            Error_Type = Error_Type & "; " & "Invalid Item"
         End If
         GoTo NotValid:
     Else
     End If
     
-    CleanItemName = ReplaceIllegalCharsFileFolderName(OLItemTitle, ReplaceCharBy, MaxFileNameLenght, False)
-    FullItemPath = HDDFolderPath & OLItemDate & " - " & CleanItemName & ".msg"
-    If Len(FullItemPath) > MaxPathLenght Then
-        If MaxPathLenght - Len(HDDFolderPath) - Len(OLItemDate & " - " & ".msg") < MinFileNameLenght Then
-            OLItemTitleShort = "-"
-            HDDItemValidLenght = False
+    Clean_Item_Name = Replace_Illegal_Chars_File_Folder_Name(OL_Item_Title, Replace_Char_By, Max_File_Name_Length, False)
+    Full_Item_Path = HDD_Folder_Path & OL_Item_Date & " - " & Clean_Item_Name & ".msg"
+    If Len(Full_Item_Path) > Max_Path_Length Then
+        If Max_Path_Length - Len(HDD_Folder_Path) - Len(OL_Item_Date & " - " & ".msg") < Min_File_Name_Length Then
+            OL_Item_Title_Short = "-"
+            HDD_Item_Valid_Length = False
         Else
-            CleanItemName = ReplaceIllegalCharsFileFolderName(OLItemTitle, ReplaceCharBy, _
-                MaxPathLenght - Len(HDDFolderPath) - Len(OLItemDate & " - " & ".msg"), False)
-            OLItemTitleShort = OLItemDate & " - " & CleanItemName & ".msg"
-            HDDItemValidLenght = True
+            Clean_Item_Name = Replace_Illegal_Chars_File_Folder_Name(OL_Item_Title, Replace_Char_By, _
+                Max_Path_Length - Len(HDD_Folder_Path) - Len(OL_Item_Date & " - " & ".msg"), False)
+            OL_Item_Title_Short = OL_Item_Date & " - " & Clean_Item_Name & ".msg"
+            HDD_Item_Valid_Length = True
         End If
     Else
-        OLItemTitleShort = OLItemDate & " - " & CleanItemName & ".msg"
-        HDDItemValidLenght = True
+        OL_Item_Title_Short = OL_Item_Date & " - " & Clean_Item_Name & ".msg"
+        HDD_Item_Valid_Length = True
     End If
 'Check validity
-    If HDDItemValidLenght = False Then
-        If ErrorType = "" Then
-            ErrorType = "File Name lenght"
+    If HDD_Item_Valid_Length = False Then
+        If Error_Type = "" Then
+            Error_Type = "File Name Length"
         Else
-            ErrorType = ErrorType & "; " & "File Name lenght"
+            Error_Type = Error_Type & "; " & "File Name Length"
         End If
     Else
     End If
 
-    If OLItemSize > MaxItemSize Then
-        OLItemSizeValid = False
+    If OL_Item_Size > Max_Item_Size Then
+        OL_Item_Size_Valid = False
     Else
-        OLItemSizeValid = True
+        OL_Item_Size_Valid = True
     End If
 'Check validity
-    If OLItemSizeValid = False Then
-        If ErrorType = "" Then
-            ErrorType = "Email size"
+    If OL_Item_Size_Valid = False Then
+        If Error_Type = "" Then
+            Error_Type = "Email size"
         Else
-            ErrorType = ErrorType & "; " & "Email size"
+            Error_Type = Error_Type & "; " & "Email size"
         End If
     Else
     End If
     
-    If OLItemToCount > MaxItemTo Then
-        OLItemToCountValid = False
+    If OL_Item_To_Count > Max_Item_To Then
+        OL_Item_To_Count_Valid = False
     Else
-        OLItemToCountValid = True
+        OL_Item_To_Count_Valid = True
     End If
 'Check validity
-    If OLItemToCountValid = False Then
-        If ErrorType = "" Then
-            ErrorType = "Number of recipients"
+    If OL_Item_To_Count_Valid = False Then
+        If Error_Type = "" Then
+            Error_Type = "Number of recipients"
         Else
-            ErrorType = ErrorType & "; " & "Number of recipients"
+            Error_Type = Error_Type & "; " & "Number of recipients"
         End If
     Else
     End If
         
 NotValid:
-    If ErrorType = "" Then
+    If Error_Type = "" Then
         Status = "Listed"
-        ErrorType = "OK"
+        Error_Type = "OK"
     Else
         Status = "Error"
     End If
 
-    ItemArray = Array(Status, ErrorType, _
-        OLFolder, OLFolderTypeValid, OLItemInFolderCount, _
-        OLItemTitle, OLItemDate, OLItemUnRead, OLItemFrom, OLItemTo, OLItemTitleShort, _
-        OLItemType, OLItemTypeValid, OLItemSize, OLItemSizeValid, _
-        OLItemToCount, OLItemToCountValid, _
-        HDDFolderPath, HDDItemValidLenght)
+    Item_Array = Array(Status, Error_Type, _
+        OL_Folder, OL_Folder_Type_Valid, OL_Item_In_Folder_Count, _
+        OL_Item_Title, OL_Item_Date, OL_Item_Unread, OL_Item_From, OL_Item_To, OL_Item_Title_Short, _
+        OL_Item_Type, OL_Item_Type_Valid, OL_Item_Size, OL_Item_Size_Valid, _
+        OL_Item_To_Count, OL_Item_To_Count_Valid, _
+        HDD_Folder_Path, HDD_Item_Valid_Length)
         
 NetworkError:
 If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
-    MsgBox "Hmmm..., AddToItemArray"
+    MsgBox "Hmmm..., Add_To_Item_Array"
 End If
-'Debug.Print "############# " & "AddToItemArray"
-'Debug.Print "OutlookFolderInput: " & OutlookFolderInput
-'Debug.Print "OutlookItemInput: " & OutlookItemInput
+'Debug.Print "############# " & "Add_To_Item_Array"
+'Debug.Print "Outlook_Folder_Input: " & Outlook_Folder_Input
+'Debug.Print "Outlook_Item_Input: " & Outlook_Item_Input
 'Debug.Print "Status: " & Status
-'Debug.Print "ErrorType: " & ErrorType
-'Debug.Print "OLFolder: " & OLFolder
-'Debug.Print "OLFolderTypeValid: " & OLFolderTypeValid
-'Debug.Print "OLItemInFolderCount: " & OLItemInFolderCount
-'Debug.Print "OLItemTitle: " & OLItemTitle
-'Debug.Print "OLItemDate: " & OLItemDate
-'Debug.Print "OLItemFrom: " & OLItemFrom
-'Debug.Print "OLItemTo: " & OLItemTo
-'Debug.Print "OLItemTitleShort: " & OLItemTitleShort
-'Debug.Print "OLItemType: " & OLItemType
-'Debug.Print "OLItemTypeValid: " & OLItemTypeValid
-'Debug.Print "OLItemSize: " & OLItemSize
-'Debug.Print "OLItemSizeValid: " & OLItemSizeValid
-'Debug.Print "OLItemToCount: " & OLItemToCount
-'Debug.Print "OLItemToCountValid: " & OLItemToCountValid
-'Debug.Print "HDDFolderPath: " & HDDFolderPath
-'Debug.Print "HDDItemValidLenght: " & HDDItemValidLenght
-'Debug.Print "############# " & "AddToItemArray"
-'    For i = LBound(ItemArray) To UBound(ItemArray)
-'    Debug.Print ItemArray(i)
+'Debug.Print "Error_Type: " & Error_Type
+'Debug.Print "OL_Folder: " & OL_Folder
+'Debug.Print "OL_Folder_Type_Valid: " & OL_Folder_Type_Valid
+'Debug.Print "OL_Item_In_Folder_Count: " & OL_Item_In_Folder_Count
+'Debug.Print "OL_Item_Title: " & OL_Item_Title
+'Debug.Print "OL_Item_Date: " & OL_Item_Date
+'Debug.Print "OL_Item_From: " & OL_Item_From
+'Debug.Print "OL_Item_To: " & OL_Item_To
+'Debug.Print "OL_Item_Title_Short: " & OL_Item_Title_Short
+'Debug.Print "OL_Item_Type: " & OL_Item_Type
+'Debug.Print "OL_Item_Type_Valid: " & OL_Item_Type_Valid
+'Debug.Print "OL_Item_Size: " & OL_Item_Size
+'Debug.Print "OL_Item_Size_Valid: " & OL_Item_Size_Valid
+'Debug.Print "OL_Item_To_Count: " & OL_Item_To_Count
+'Debug.Print "OL_Item_To_Count_Valid: " & OL_Item_To_Count_Valid
+'Debug.Print "HDD_Folder_Path: " & HDD_Folder_Path
+'Debug.Print "HDD_Item_Valid_Length: " & HDD_Item_Valid_Length
+'Debug.Print "############# " & "Add_To_Item_Array"
+'    For i = LBound(Item_Array) To UBound(Item_Array)
+'    Debug.Print Item_Array(i)
 '    Next
-'Debug.Print "############# " & "AddToItemArray"
+'Debug.Print "############# " & "Add_To_Item_Array"
 End Sub
 
-Sub AddToShortItemArray(OutlookFolderInput As Outlook.MAPIFolder, OutlookItemInput) 'As Outlook.MailItem)
-'Creates Short ArrayLine for Outlook item with attributes to be checked against saved files
-Dim OLFolder As Outlook.MAPIFolder
-Dim OLItem As Object 'Outlook.MailItem
-Dim OLItemTitle As String
-Dim OLItemDate As String
-Dim OLItemTitleShort As String
-Dim OLItemType As String
-Dim HDDFolderPath As String
-Dim CleanItemName As String
+Sub Add_To_Short_Item_Array(Outlook_Folder_Input As Outlook.MAPIFolder, Outlook_Item_Input) 'As Outlook.MailItem)
+'Creates Short Array_Line for Outlook item with attributes to be checked against saved files
+Dim OL_Folder As Outlook.MAPIFolder
+Dim OL_Item As Object 'Outlook.MailItem
+Dim OL_Item_Title As String
+Dim OL_Item_Date As String
+Dim OL_Item_Title_Short As String
+Dim OL_Item_Type As String
+Dim HDD_Folder_Path As String
+Dim Clean_Item_Name As String
 Dim i As Double
-Dim ClassCheckChar As Double
+Dim Class_Check_Char As Double
 
     On Error GoTo NetworkError
     
-    Set OLFolder = OutlookFolderInput
-    Set OLItem = OutlookItemInput
-    ClassCheckChar = 8
+    Set OL_Folder = Outlook_Folder_Input
+    Set OL_Item = Outlook_Item_Input
+    Class_Check_Char = 8
     
-    OLItemTitle = OLItem.Subject
-    OLItemType = OLItem.MessageClass 'Class
-    HDDFolderPath = DefultBackupLocation & "\" & CleanOutlookFullPathName(OLFolder) & "\"
+    OL_Item_Title = OL_Item.Subject
+    OL_Item_Type = OL_Item.MessageClass 'Class
+    HDD_Folder_Path = Default_Backup_Location & "\" & Clean_Outlook_Full_Path_Name(OL_Folder) & "\"
     
-    Select Case Left(OLItem.MessageClass, ClassCheckChar)
-        Case Left("IPM.Appointment", ClassCheckChar) 'Appointment
-'Debug.Print "RecurrenceState: " & OLItem.RecurrenceState
-            OLItemDate = Format(OLItem.Start, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.Start, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.Note", ClassCheckChar) 'Mail
-            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.Schedule.Meeting.Resp.Tent", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Resp.Pos", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Resp.Neg", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Request", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Canceled", ClassCheckChar) 'Meeting
-            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.StickyNote", ClassCheckChar) 'Note
-            OLItemDate = Format(OLItem.LastModificationTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.LastModificationTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.Task", ClassCheckChar) 'Task
-            OLItemDate = Format(OLItem.StartDate, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+    Select Case Left(OL_Item.MessageClass, Class_Check_Char)
+        Case Left("IPM.Appointment", Class_Check_Char) 'Appointment
+'Debug.Print "RecurrenceState: " & OL_Item.RecurrenceState
+            OL_Item_Date = Format(OL_Item.Start, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.Start, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Note", Class_Check_Char) 'Mail
+            OL_Item_Date = Format(OL_Item.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Schedule.Meeting.Resp.Tent", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Resp.Pos", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Resp.Neg", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Request", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Canceled", Class_Check_Char) 'Meeting
+            OL_Item_Date = Format(OL_Item.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.StickyNote", Class_Check_Char) 'Note
+            OL_Item_Date = Format(OL_Item.LastModificationTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.LastModificationTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Task", Class_Check_Char) 'Task
+            OL_Item_Date = Format(OL_Item.StartDate, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
         Case Else
     End Select
     
-    CleanItemName = ReplaceIllegalCharsFileFolderName(OLItemTitle, ReplaceCharBy, MaxFileNameLenght, False) & ".msg"
+    Clean_Item_Name = Replace_Illegal_Chars_File_Folder_Name(OL_Item_Title, Replace_Char_By, Max_File_Name_Length, False) & ".msg"
 
-    ItemShortArray = Array(OLItemDate, CleanItemName, HDDFolderPath)
+    Item_Short_Array = Array(OL_Item_Date, Clean_Item_Name, HDD_Folder_Path)
     
 NetworkError:
 If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
-    MsgBox "Hmmm..., AddToShortItemArray"
+    MsgBox "Hmmm..., Add_To_Short_Item_Array"
 End If
-'Debug.Print "############# " & "AddToShortItemArray"
-'Debug.Print "OutlookFolderInput: " & OutlookFolderInput
-'Debug.Print "OutlookItemInput: " & OutlookItemInput
-'Debug.Print "OLItemType: " & OLItemType
-'Debug.Print "OLItemDate: " & OLItemDate
-'Debug.Print "OLItemTitleShort: " & OLItemTitleShort
-'Debug.Print "HDDFolderPath: " & HDDFolderPath
-'Debug.Print "############# " & "AddToShortItemArray"
-'    For i = LBound(ItemShortArray) To UBound(ItemShortArray)
-'       Debug.Print ItemShortArray(i)
+'Debug.Print "############# " & "Add_To_Short_Item_Array"
+'Debug.Print "Outlook_Folder_Input: " & Outlook_Folder_Input
+'Debug.Print "Outlook_Item_Input: " & Outlook_Item_Input
+'Debug.Print "OL_Item_Type: " & OL_Item_Type
+'Debug.Print "OL_Item_Date: " & OL_Item_Date
+'Debug.Print "OL_Item_Title_Short: " & OL_Item_Title_Short
+'Debug.Print "HDD_Folder_Path: " & HDD_Folder_Path
+'Debug.Print "############# " & "Add_To_Short_Item_Array"
+'    For i = LBound(Item_Short_Array) To UBound(Item_Short_Array)
+'       Debug.Print Item_Short_Array(i)
 '    Next
-'Debug.Print "############# " & "AddToShortItemArray"
+'Debug.Print "############# " & "Add_To_Short_Item_Array"
 End Sub
 
-Sub LogFileOpen(Filename As String)
+Sub Log_File_Open(File_Name As String)
 'Open the selected file
 Dim Where As String
-    FileNumber = FreeFile
-    Where = Filename
-    Open Where For Append Access Write As #FileNumber
-'Debug.Print "############# " & "LogFileOpen"
-'Debug.Print "FileName: " & FileName
-'Debug.Print "############# " & "LogFileOpen"
+    File_Number = FreeFile
+    Where = File_Name
+    Open Where For Append Access Write As #File_Number
+'Debug.Print "############# " & "Log_File_Open"
+'Debug.Print "File_Name: " & File_Name
+'Debug.Print "############# " & "Log_File_Open"
 End Sub
 
-Sub LogFileCreateWithHeading(Filename As String, Heading As Variant)
+Sub Log_File_Create_With_Heading(File_Name As String, Heading As Variant)
 'Open the selected file or creates it if doesn't exit with header
 Dim Rows As Double
 Dim Columns As Double
-Dim ArrayValue As String
-Dim WholeLine As String
+Dim Array_Value As String
+Dim Whole_Line As String
 Dim Where As String
-Dim ArrayHeading As Variant
+Dim Array_Heading As Variant
     Set fso = New Scripting.FileSystemObject
-    FileNumber = FreeFile
+    File_Number = FreeFile
 
-    Where = Filename
-    ReDim ArrayHeading(UBound(Heading))
-    ArrayHeading = Heading
+    Where = File_Name
+    ReDim Array_Heading(UBound(Heading))
+    Array_Heading = Heading
     
-    If fso.FileExists(Filename) = False Then
-        FileNumber = FreeFile
-        Where = Filename
-        Open Where For Output Access Write As #FileNumber
-        WholeLine = ""
-        For Rows = LBound(ArrayHeading) To UBound(ArrayHeading)
-            ArrayValue = ArrayHeading(Rows)
-            If WholeLine = "" Then
-                WholeLine = ArrayValue
+    If fso.FileExists(File_Name) = False Then
+        File_Number = FreeFile
+        Where = File_Name
+        Open Where For Output Access Write As #File_Number
+        Whole_Line = ""
+        For Rows = LBound(Array_Heading) To UBound(Array_Heading)
+            Array_Value = Array_Heading(Rows)
+            If Whole_Line = "" Then
+                Whole_Line = Array_Value
             Else
-                WholeLine = WholeLine & SeparatorInFile & ArrayValue
+                Whole_Line = Whole_Line & Separator_In_File & Array_Value
             End If
         Next Rows
-        Print #FileNumber, WholeLine
-        Close #FileNumber
+        Print #File_Number, Whole_Line
+        Close #File_Number
     End If
-'Debug.Print "############# " & "LogFileCreateWithHeading"
-'Debug.Print "FileName: " & FileName
+'Debug.Print "############# " & "Log_File_Create_With_Heading"
+'Debug.Print "File_Name: " & File_Name
 'Dim i As Double
-'    For i = LBound(ArrayHeading) To UBound(ArrayHeading)
+'    For i = LBound(Array_Heading) To UBound(Array_Heading)
 '        Debug.Print "Heading" & i & ": " & Heading(i)
 '    Next
-'Debug.Print "############# " & "LogFileCreateWithHeading"
+'Debug.Print "############# " & "Log_File_Create_With_Heading"
 End Sub
 
-Sub LogFileAddLine(ArrayToAdd As Variant)
+Sub Log_File_Add_Line(Array_To_Add As Variant)
 'Add an array as line to opened text file
 Dim Rows As Double
 Dim Columns As Double
-Dim ArrayValue As String
-Dim WholeLine As String
+Dim Array_Value As String
+Dim Whole_Line As String
 Dim Where As String
-Dim ArrayLine As Variant
+Dim Array_Line As Variant
 
-    WholeLine = ""
-    ReDim ArrayLine(UBound(ArrayToAdd))
-    ArrayLine = ArrayToAdd
+    Whole_Line = ""
+    ReDim Array_Line(UBound(Array_To_Add))
+    Array_Line = Array_To_Add
 
-    For Columns = LBound(ArrayLine) To UBound(ArrayLine)
-        ArrayValue = ArrayLine(Columns)
-        If WholeLine = "" Then
-            WholeLine = ArrayValue
+    For Columns = LBound(Array_Line) To UBound(Array_Line)
+        Array_Value = Array_Line(Columns)
+        If Whole_Line = "" Then
+            Whole_Line = Array_Value
         Else
-            WholeLine = WholeLine & SeparatorInFile & ArrayValue
+            Whole_Line = Whole_Line & Separator_In_File & Array_Value
         End If
     Next Columns
-    Print #FileNumber, WholeLine
-'Debug.Print "############# " & "LogFileAddLine"
-'Debug.Print "WholeLine: " & WholeLine
-'Debug.Print "############# " & "LogFileAddLine"
+    Print #File_Number, Whole_Line
+'Debug.Print "############# " & "Log_File_Add_Line"
+'Debug.Print "Whole_Line: " & Whole_Line
+'Debug.Print "############# " & "Log_File_Add_Line"
 End Sub
 
-Sub LogFileClose()
+Sub Log_File_Close()
 'Close an open txt file
-    Close #FileNumber
-'Debug.Print "############# " & "LogFileClose"
+    Close #File_Number
+'Debug.Print "############# " & "Log_File_Close"
 End Sub
 
-Sub BuildHDDArray(Optional FolderToCheck As String, Optional Filename As String)
+Sub Build_HDD_Array(Optional Folder_To_Check As String, Optional File_Name As String)
 'Build initial log file of already saved Outlook items
 Dim What As String
 Dim Where As String
 
-    Call WipeMeClean
-    Call SetConfig
+    Call Wipe_Me_Clean
+    Call Set_Config
 
-    If Filename = Empty Then
-        Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+    If File_Name = Empty Then
+        Where = Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt"
     Else
-        Where = Filename
+        Where = File_Name
     End If
 
-    If FolderToCheck = Empty Then
-        What = DefultBackupLocation '& "\"
+    If Folder_To_Check = Empty Then
+        What = Default_Backup_Location '& "\"
     Else
-        What = FolderToCheck
+        What = Folder_To_Check
     End If
 
-    Call SetBackupPgogressBarData
-    Call HDDFolderItemCount(What)
-    Call HDDItemToArray(What)
-    Call RebuildLogFile
+    Call Set_Backup_Progress_Bar_Data
+    Call HDD_Folder_Item_Count(What)
+    Call HDD_Item_To_Array(What)
+    Call Rebuild_Log_File
     Unload BackupBar
 
-'Debug.Print "############# " & "BuildHDDArray"
-'Debug.Print "FolderToCheck: " & FolderToCheck
-'Debug.Print "FileName: " & Filename
-'Debug.Print "UBound(ArchivedFileArray, 2): " & UBound(ArchivedFileArray, 2)
-'Debug.Print "HDDFolderCount: " & HDDFolderCount
-'Debug.Print "HDDFileCount: " & HDDFileCount
-'Debug.Print "############# " & "BuildHDDArray"
+'Debug.Print "############# " & "Build_HDD_Array"
+'Debug.Print "Folder_To_Check: " & Folder_To_Check
+'Debug.Print "File_Name: " & File_Name
+'Debug.Print "UBound(Archived_File_Array, 2): " & UBound(Archived_File_Array, 2)
+'Debug.Print "HDD_Folder_Count: " & HDD_Folder_Count
+'Debug.Print "HDD_File_Count: " & HDD_File_Count
+'Debug.Print "############# " & "Build_HDD_Array"
 End Sub
 
-Sub HDDItemToArray(HDDFolderInput As Variant)
+Sub HDD_Item_To_Array(HDD_Folder_Input As Variant)
 'Loop through folders (and subfolders) and files from selected folder and append to HDD array
-Dim FolderLoop As Scripting.Folder
-Dim SubFolderLoop As Scripting.Folder
-Dim HDDFolder As Variant
-Dim HDDFile As Variant
-Dim HDDFileName As String
-Dim HDDDate As String
-Dim HDDSubject As String
+Dim Folder_Loop As Scripting.Folder
+Dim Sub_Folder_Loop As Scripting.Folder
+Dim HDD_Folder As Variant
+Dim HDD_File As Variant
+Dim HDD_File_Name As String
+Dim HDD_Date As String
+Dim HDD_Subject As String
 
 Dim i As Double
     Set fso = New Scripting.FileSystemObject
-    Set FolderLoop = fso.GetFolder(HDDFolderInput)
-    If fso.FolderExists(FolderLoop) = True Then
-        HDDFolderCountToday = HDDFolderCountToday + 1
-        Set HDDFolder = FolderLoop.Files
-        For Each HDDFile In HDDFolder
-            HDDFileCountToday = HDDFileCountToday + 1
-            HDDFileName = HDDFile.Name
-            If Len(HDDFileName) > 21 And IsNumeric(Left(HDDFileName, 2)) = True Then
-                HDDDate = Left(HDDFileName, 17) 'TextToDateTime(HDDFileName)
-                HDDSubject = Mid(HDDFileName, 21, 9999)
-                FileArray = Array(HDDDate, HDDSubject, FolderLoop)
-                Call AddToHDDArray(FileArray)
-                ProgressNowTime = Now()
-                Call UpdateHDDProgressBar(FolderLoop, HDDFileName, "Create array of existsing files")
+    Set Folder_Loop = fso.GetFolder(HDD_Folder_Input)
+    If fso.FolderExists(Folder_Loop) = True Then
+        HDD_Folder_Count_Today = HDD_Folder_Count_Today + 1
+        Set HDD_Folder = Folder_Loop.Files
+        For Each HDD_File In HDD_Folder
+            HDD_File_Count_Today = HDD_File_Count_Today + 1
+            HDD_File_Name = HDD_File.Name
+            If Len(HDD_File_Name) > 21 And IsNumeric(Left(HDD_File_Name, 2)) = True Then
+                HDD_Date = Left(HDD_File_Name, 17) 'Text_To_Date_Time(HDD_File_Name)
+                HDD_Subject = Mid(HDD_File_Name, 21, 9999)
+                File_Array = Array(HDD_Date, HDD_Subject, Folder_Loop)
+                Call Add_To_HDD_Array(File_Array)
+                Progress_Now_Time = Now()
+                Call Update_HDD_Progress_Bar(Folder_Loop, HDD_File_Name, "Create array of existing files")
                 DoEvents
             End If
         Next
     Else
     End If
 'Process all folders and subfolders recursively
-    If FolderLoop.SubFolders.Count Then
-       For Each SubFolderLoop In FolderLoop.SubFolders
-           Call HDDItemToArray(SubFolderLoop)
+    If Folder_Loop.SubFolders.Count Then
+       For Each Sub_Folder_Loop In Folder_Loop.SubFolders
+           Call HDD_Item_To_Array(Sub_Folder_Loop)
        Next
     End If
-'Debug.Print "############# " & "HDDItemToArray"
-'Debug.Print "HDDFolderInput: " & HDDFolderInput
-'Debug.Print "UBound(ArchivedFileArray, 1): " & UBound(ArchivedFileArray, 1)
-'Debug.Print "############# " & "HDDItemToArray"
+'Debug.Print "############# " & "HDD_Item_To_Array"
+'Debug.Print "HDD_Folder_Input: " & HDD_Folder_Input
+'Debug.Print "UBound(Archived_File_Array, 1): " & UBound(Archived_File_Array, 1)
+'Debug.Print "############# " & "HDD_Item_To_Array"
 End Sub
 
-Sub AddToHDDArray(NewArrayLine As Variant)
-'Add 'ArrayLine' to HDD array (horizontal)
-Dim NewLine As Variant
+Sub Add_To_HDD_Array(NewArray_Line As Variant)
+'Add 'Array_Line' to HDD array (horizontal)
+Dim New_Line As Variant
 Dim Row As Double
 Dim Col As Double
-Dim TempArray As Variant
-Dim ArrayRowSize As Double
-Dim ArrayColumnSize As Double
+Dim Temp_Array As Variant
+Dim Array_Row_Size As Double
+Dim Array_Column_Size As Double
     
-    NewLine = NewArrayLine
-    ArrayRowSize = UBound(NewLine)
-    If IsEmpty(ArchivedFileArray) Then
-        ReDim ArchivedFileArray(UBound(FileArrayHeading), 1)
-        For Row = 0 To ArrayRowSize
-            ArchivedFileArray(Row, Col) = FileArrayHeading(Row)
+    New_Line = NewArray_Line
+    Array_Row_Size = UBound(New_Line)
+    If IsEmpty(Archived_File_Array) Then
+        ReDim Archived_File_Array(UBound(File_Array_Heading), 1)
+        For Row = 0 To Array_Row_Size
+            Archived_File_Array(Row, Col) = File_Array_Heading(Row)
         Next
     Else
-        ArrayColumnSize = UBound(ArchivedFileArray, 2)
-        ReDim Preserve ArchivedFileArray(ArrayRowSize, ArrayColumnSize + 1)
+        Array_Column_Size = UBound(Archived_File_Array, 2)
+        ReDim Preserve Archived_File_Array(Array_Row_Size, Array_Column_Size + 1)
     End If
-    ArrayColumnSize = UBound(ArchivedFileArray, 2)
-    For Row = 0 To ArrayRowSize
-        ArchivedFileArray(Row, ArrayColumnSize) = NewLine(Row)
+    Array_Column_Size = UBound(Archived_File_Array, 2)
+    For Row = 0 To Array_Row_Size
+        Archived_File_Array(Row, Array_Column_Size) = New_Line(Row)
     Next
-'Debug.Print "############# " & "AddToHDDArray"
-'Debug.Print "UBound(NewLine, 2): " & UBound(NewLine, 2)
-'Debug.Print "UBound(ArchivedFileArray, 2): " & UBound(ArchivedFileArray, 2)
-'Debug.Print "############# " & "AddToLogArray"
+'Debug.Print "############# " & "Add_To_HDD_Array"
+'Debug.Print "UBound(New_Line, 2): " & UBound(New_Line, 2)
+'Debug.Print "UBound(Archived_File_Array, 2): " & UBound(Archived_File_Array, 2)
+'Debug.Print "############# " & "AddToLog_Array"
 'Dim i As Double
 'Dim j As Double
-'    For i = LBound(ArchivedFileArray, 2) To UBound(ArchivedFileArray, 2)
+'    For i = LBound(Archived_File_Array, 2) To UBound(Archived_File_Array, 2)
 '        Debug.Print "                                             New Line"
-'        For j = LBound(ArchivedFileArray, 1) To UBound(ArchivedFileArray, 1)
-'            Debug.Print ArchivedFileArray(j, i)
+'        For j = LBound(Archived_File_Array, 1) To UBound(Archived_File_Array, 1)
+'            Debug.Print Archived_File_Array(j, i)
 '        Next
 '    Next
-'Debug.Print "############# " & "AddToHDDArray"
+'Debug.Print "############# " & "Add_To_HDD_Array"
 End Sub
 
-Sub LogHDDFileInOneVertical(Filename As String)
+Sub Log_HDD_File_In_One_Vertical(File_Name As String)
 'Creates a text log file with date and headings and a list of files saved (vertical log file from horizontal array)
 'Overwrites existing file
 Dim Rows As Double
 Dim Columns As Double
-Dim ArrayValue As String
-Dim WholeLine As String
+Dim Array_Value As String
+Dim Whole_Line As String
 Dim Where As String
-Dim FileNumber As Double
+Dim File_Number As Double
     
-    FileNumber = FreeFile
-    Where = Filename
-    Open Where For Output Access Write As #FileNumber
+    File_Number = FreeFile
+    Where = File_Name
+    Open Where For Output Access Write As #File_Number
     
-    HDDFileCount = UBound(ArchivedFileArray, 2) + 1
-    For Columns = LBound(ArchivedFileArray, 2) To UBound(ArchivedFileArray, 2)
-        WholeLine = ""
-        For Rows = LBound(ArchivedFileArray, 1) To UBound(ArchivedFileArray, 1)
-            ArrayValue = ArchivedFileArray(Rows, Columns)
-            If WholeLine = "" Then
-                WholeLine = ArrayValue
+    HDD_File_Count = UBound(Archived_File_Array, 2) + 1
+    For Columns = LBound(Archived_File_Array, 2) To UBound(Archived_File_Array, 2)
+        Whole_Line = ""
+        For Rows = LBound(Archived_File_Array, 1) To UBound(Archived_File_Array, 1)
+            Array_Value = Archived_File_Array(Rows, Columns)
+            If Whole_Line = "" Then
+                Whole_Line = Array_Value
             Else
-                WholeLine = WholeLine & SeparatorInFile & ArrayValue
+                Whole_Line = Whole_Line & Separator_In_File & Array_Value
             End If
         Next Rows
-        Print #FileNumber, WholeLine
-        HDDFileCountToday = Columns + 1
-        ProgressNowTime = Now()
-        Call UpdateHDDProgressBar(Where, WholeLine, "Save log file")
+        Print #File_Number, Whole_Line
+        HDD_File_Count_Today = Columns + 1
+        Progress_Now_Time = Now()
+        Call Update_HDD_Progress_Bar(Where, Whole_Line, "Save log file")
         DoEvents
     Next Columns
-    Close #FileNumber
-'Debug.Print "############# " & "LogHDDFileInOneVertical"
+    Close #File_Number
+'Debug.Print "############# " & "Log_HDD_File_In_One_Vertical"
 'Debug.Print "Where: " & Where
-'Debug.Print "############# " & "LogHDDFileInOneVertical"
+'Debug.Print "############# " & "Log_HDD_File_In_One_Vertical"
 End Sub
 
-Sub ReadHDDInAsArray(Filename As String) 'FileName As String)
+Sub Read_HDD_In_As_Array(File_Name As String) 'File_Name As String)
 'Reads log file into array (vertical file into horizontal array)
 Dim Where As String
-Dim WholeLine As String
-Dim NewLine As Variant
+Dim Whole_Line As String
+Dim New_Line As Variant
 Dim Row As Double
 Dim Col As Double
-Dim RowStart As Double
-Dim RowEnd As Double
-Dim ColStart As Double
-Dim ColEnd As Double
-Dim TempArray As Variant
-Dim ArrayRowSize As Double
-Dim ArrayColumnSize As Double
+Dim Row_Start As Double
+Dim Row_End As Double
+Dim Col_Start As Double
+Dim Col_End As Double
+Dim Temp_Array As Variant
+Dim Array_Row_Size As Double
+Dim Array_Column_Size As Double
 
-    FileNumber = FreeFile
-    Where = Filename
+    File_Number = FreeFile
+    Where = File_Name
     
-    ArrayRowSize = UBound(FileArrayHeading)
-    ReDim NewLine(ArrayRowSize)
+    Array_Row_Size = UBound(File_Array_Heading)
+    ReDim New_Line(Array_Row_Size)
     
-    Open Where For Input As #FileNumber
+    Open Where For Input As #File_Number
     Do Until EOF(1)
-        Line Input #FileNumber, WholeLine
+        Line Input #File_Number, Whole_Line
 
-        For Col = 0 To ArrayRowSize
+        For Col = 0 To Array_Row_Size
             If Col = 0 Then
-                ColStart = 1
+                Col_Start = 1
             Else
-                ColStart = ColEnd + 1
+                Col_Start = Col_End + 1
             End If
-            If Col = ArrayRowSize Then
-                ColEnd = Len(WholeLine) + 1
+            If Col = Array_Row_Size Then
+                Col_End = Len(Whole_Line) + 1
             Else
-                ColEnd = InStr(ColStart, WholeLine, SeparatorInFile)
+                Col_End = InStr(Col_Start, Whole_Line, Separator_In_File)
             End If
-            NewLine(Col) = Mid(WholeLine, ColStart, ColEnd - ColStart)
+            New_Line(Col) = Mid(Whole_Line, Col_Start, Col_End - Col_Start)
         Next
 
-        If IsEmpty(ArchivedFileArray) Then
-            ReDim ArchivedFileArray(UBound(FileArrayHeading), 1)
-            For Row = 0 To ArrayRowSize
-                ArchivedFileArray(Row, 0) = FileArrayHeading(Row)
+        If IsEmpty(Archived_File_Array) Then
+            ReDim Archived_File_Array(UBound(File_Array_Heading), 1)
+            For Row = 0 To Array_Row_Size
+                Archived_File_Array(Row, 0) = File_Array_Heading(Row)
             Next
         Else
-            ArrayColumnSize = UBound(ArchivedFileArray, 2)
-            ReDim Preserve ArchivedFileArray(ArrayRowSize, ArrayColumnSize + 1)
+            Array_Column_Size = UBound(Archived_File_Array, 2)
+            ReDim Preserve Archived_File_Array(Array_Row_Size, Array_Column_Size + 1)
         End If
-        ArrayColumnSize = UBound(ArchivedFileArray, 2)
-        For Row = 0 To ArrayRowSize
-            ArchivedFileArray(Row, ArrayColumnSize) = NewLine(Row)
+        Array_Column_Size = UBound(Archived_File_Array, 2)
+        For Row = 0 To Array_Row_Size
+            Archived_File_Array(Row, Array_Column_Size) = New_Line(Row)
         Next
 'Dim i As Double
 'Dim j As Double
 '        i = 1 + i
 '        Debug.Print "                                                              New Line"
-'        For j = LBound(ArchivedFileArray, 1) To UBound(ArchivedFileArray, 1)
-'            Debug.Print ArchivedFileArray(j, i)
+'        For j = LBound(Archived_File_Array, 1) To UBound(Archived_File_Array, 1)
+'            Debug.Print Archived_File_Array(j, i)
 '        Next
     Loop
-    Close #FileNumber
+    Close #File_Number
 'Debug.Print "ReadIn: end: " & Now()
-'Debug.Print "############# " & "ReadHDDInAsArray"
-'Debug.Print "UBound(ArchivedFileArray, 1): " & UBound(ArchivedFileArray, 1)
-'Debug.Print "UBound(ArchivedFileArray, 2): " & UBound(ArchivedFileArray, 2)
-'Debug.Print "############# " & "ReadHDDInAsArray"
+'Debug.Print "############# " & "Read_HDD_In_As_Array"
+'Debug.Print "UBound(Archived_File_Array, 1): " & UBound(Archived_File_Array, 1)
+'Debug.Print "UBound(Archived_File_Array, 2): " & UBound(Archived_File_Array, 2)
+'Debug.Print "############# " & "Read_HDD_In_As_Array"
 'Dim i As Double
 'Dim j As Double
-'    For i = LBound(ArchivedFileArray, 2) To UBound(ArchivedFileArray, 2)
+'    For i = LBound(Archived_File_Array, 2) To UBound(Archived_File_Array, 2)
 '        Debug.Print "                                                              New Line"
-'        For j = LBound(ArchivedFileArray, 1) To UBound(ArchivedFileArray, 1)
-'            Debug.Print ArchivedFileArray(j, i)
+'        For j = LBound(Archived_File_Array, 1) To UBound(Archived_File_Array, 1)
+'            Debug.Print Archived_File_Array(j, i)
 '        Next
 '    Next
-'Debug.Print "############# " & "ReadHDDInAsArray"
+'Debug.Print "############# " & "Read_HDD_In_As_Array"
 End Sub
 
-Sub RebuildLogFile(Optional Filename As String)
-'Reads log file into array sort it by date and resave
+Sub Rebuild_Log_File(Optional File_Name As String)
+'Reads log file into array sort it by date and Resave
 Dim i As Long
 Dim Where As String
-Dim TempArray As Variant
-Dim NewLine As Variant
+Dim Temp_Array As Variant
+Dim New_Line As Variant
 Dim Row As Double
 Dim Col As Double
    
-    If IsEmpty(ArchivedFileArray) Then
-        Call WipeMeClean
-        Call SetConfig
-        If Filename = Empty Then
-            Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+    If IsEmpty(Archived_File_Array) Then
+        Call Wipe_Me_Clean
+        Call Set_Config
+        If File_Name = Empty Then
+            Where = Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt"
         Else
-            Where = Filename
+            Where = File_Name
         End If
-        Call SetBackupPgogressBarData
-        Call ReadHDDInAsArray(Where)
+        Call Set_Backup_Progress_Bar_Data
+        Call Read_HDD_In_As_Array(Where)
     Else
-        If Filename = Empty Then
-            Where = DefultBackupLocationLog & "\" & LogFileSum & ".txt"
+        If File_Name = Empty Then
+            Where = Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt"
         Else
-            Where = Filename
+            Where = File_Name
         End If
     End If
     
-    Call QuickSort2(ArchivedFileArray, 1, 0)
+    Call QuickSort2(Archived_File_Array, 1, 0)
 
-    For i = UBound(ArchivedFileArray, 2) To 1 Step -1
-        If IsNumeric(Left(ArchivedFileArray(0, i), 1)) = False Then
-            ReDim Preserve ArchivedFileArray(UBound(ArchivedFileArray, 1), UBound(ArchivedFileArray, 2) - 1)
+    For i = UBound(Archived_File_Array, 2) To 1 Step -1
+        If IsNumeric(Left(Archived_File_Array(0, i), 1)) = False Then
+            ReDim Preserve Archived_File_Array(UBound(Archived_File_Array, 1), UBound(Archived_File_Array, 2) - 1)
         Else
-            GoTo ReSaveFile
+            GoTo ResaveFile
         End If
     Next
 
-ReSaveFile:
-    TempArray = ArchivedFileArray
-    ArchivedFileArray = Empty
+ResaveFile:
+    Temp_Array = Archived_File_Array
+    Archived_File_Array = Empty
 
-    ReDim NewLine(UBound(TempArray, 1))
-'    Debug.Print UBound(NewLine)
+    ReDim New_Line(UBound(Temp_Array, 1))
+'    Debug.Print UBound(New_Line)
 
-    For Col = LBound(TempArray, 2) To UBound(TempArray, 2)
-        For Row = LBound(TempArray, 1) To UBound(TempArray, 1)
-             NewLine(Row) = TempArray(Row, Col)
+    For Col = LBound(Temp_Array, 2) To UBound(Temp_Array, 2)
+        For Row = LBound(Temp_Array, 1) To UBound(Temp_Array, 1)
+             New_Line(Row) = Temp_Array(Row, Col)
         Next
-        Call AddToHDDArray(NewLine)
+        Call Add_To_HDD_Array(New_Line)
     Next
     
-    Call LogHDDFileInOneVertical(Where)
+    Call Log_HDD_File_In_One_Vertical(Where)
     Unload BackupBar
-    Call WipeMeClean
-'Debug.Print "############# " & "RebuildLogFile"
-'Debug.Print "UBound(ArchivedFileArray, 1): " & UBound(ArchivedFileArray, 1)
-'Debug.Print "UBound(ArchivedFileArray, 2): " & UBound(ArchivedFileArray, 2)
-'Debug.Print "############# " & "RebuildLogFile"
+    Call Wipe_Me_Clean
+'Debug.Print "############# " & "Rebuild_Log_File"
+'Debug.Print "UBound(Archived_File_Array, 1): " & UBound(Archived_File_Array, 1)
+'Debug.Print "UBound(Archived_File_Array, 2): " & UBound(Archived_File_Array, 2)
+'Debug.Print "############# " & "Rebuild_Log_File"
 'Dim i As Double
 'Dim j As Double
-'    For i = LBound(ArchivedFileArray, 2) To UBound(ArchivedFileArray, 2)
+'    For i = LBound(Archived_File_Array, 2) To UBound(Archived_File_Array, 2)
 '        Debug.Print "                                                              New Line"
-'        For j = LBound(ArchivedFileArray, 1) To UBound(ArchivedFileArray, 1)
-'            Debug.Print ArchivedFileArray(j, i)
+'        For j = LBound(Archived_File_Array, 1) To UBound(Archived_File_Array, 1)
+'            Debug.Print Archived_File_Array(j, i)
 '        Next
 '    Next
-'Debug.Print "############# " & "RebuildLogFile"
+'Debug.Print "############# " & "Rebuild_Log_File"
 End Sub
 
-Sub LogLastItemChecked(Filename As String)
+Sub Log_Last_Item_Checked(File_Name As String)
 'Create file with a date of item last checked
 Dim Where As String
-Dim WholeLine As String
-    FileNumber = FreeFile
-    Where = Filename
-    WholeLine = LastItemCheckedDate
-    Open Where For Output Access Write As #FileNumber
-    Print #FileNumber, WholeLine
-    Close #FileNumber
-'Debug.Print "############# " & LogLastItemChecked
-'Debug.Print "FileName: " & FileName
-'Debug.Print "LastItemCheckedDate: " & LastItemCheckedDate
-'Debug.Print "############# " & LogLastItemChecked
+Dim Whole_Line As String
+    File_Number = FreeFile
+    Where = File_Name
+    Whole_Line = Last_Item_Checked_Date
+    Open Where For Output Access Write As #File_Number
+    Print #File_Number, Whole_Line
+    Close #File_Number
+'Debug.Print "############# " & Log_Last_Item_Checked
+'Debug.Print "File_Name: " & File_Name
+'Debug.Print "Last_Item_Checked_Date: " & Last_Item_Checked_Date
+'Debug.Print "############# " & Log_Last_Item_Checked
 End Sub
 
-Sub ReadLastItemDateLog(Filename As String)
-'Reads last item date log file and sets LastItemCheckedDate
+Sub Read_Last_Item_Date_Log(File_Name As String)
+'Reads last item date log file and sets Last_Item_Checked_Date
 Dim Where As String
-Dim WholeLine As String
+Dim Whole_Line As String
     Set fso = New Scripting.FileSystemObject
-    FileNumber = FreeFile
-    Where = Filename
+    File_Number = FreeFile
+    Where = File_Name
     If fso.FileExists(Where) Then
-        Open Where For Input As #FileNumber
+        Open Where For Input As #File_Number
         Do Until EOF(1)
-            Line Input #FileNumber, WholeLine
-            LastItemCheckedDate = WholeLine
+            Line Input #File_Number, Whole_Line
+            Last_Item_Checked_Date = Whole_Line
         Loop
-        Close #FileNumber
+        Close #File_Number
     End If
-'Debug.Print "############# " & "ReadLastItemDateLog"
-'Debug.Print "FileName: " & FileName
-'Debug.Print "LastItemCheckedDate: " & LastItemCheckedDate
-'Debug.Print "############# " & "ReadLastItemDateLog"
+'Debug.Print "############# " & "Read_Last_Item_Date_Log"
+'Debug.Print "File_Name: " & File_Name
+'Debug.Print "Last_Item_Checked_Date: " & Last_Item_Checked_Date
+'Debug.Print "############# " & "Read_Last_Item_Date_Log"
 End Sub
 
-Sub AddToShortItemDate(OutlookFolderInput As Outlook.MAPIFolder, OutlookItemInput) 'As Outlook.MailItem)
+Sub Add_To_Short_Item_Date(Outlook_Folder_Input As Outlook.MAPIFolder, Outlook_Item_Input) 'As Outlook.MailItem)
 'Creates ShortDateArray for Outlook item
-Dim OLFolder As Outlook.MAPIFolder
-Dim OLItem As Object 'Outlook.MailItem
-Dim OLItemDate As String
-Dim OLItemType As String
-Dim ClassCheckChar As Double
+Dim OL_Folder As Outlook.MAPIFolder
+Dim OL_Item As Object 'Outlook.MailItem
+Dim OL_Item_Date As String
+Dim OL_Item_Type As String
+Dim Class_Check_Char As Double
 Dim i As Double
 
     On Error GoTo NetworkError
     
-    Set OLFolder = OutlookFolderInput
-    Set OLItem = OutlookItemInput
-    ClassCheckChar = 8
+    Set OL_Folder = Outlook_Folder_Input
+    Set OL_Item = Outlook_Item_Input
+    Class_Check_Char = 8
 
-    OLItemType = OLItem.MessageClass 'Class
+    OL_Item_Type = OL_Item.MessageClass 'Class
 
-    Select Case Left(OLItem.MessageClass, ClassCheckChar)
-        Case Left("IPM.Appointment", ClassCheckChar) 'Appointment
-'Debug.Print "RecurrenceState: " & OLItem.RecurrenceState
-            OLItemDate = OLItem.Start
-        Case Left("IPM.Note", ClassCheckChar) 'Mail
-            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.Schedule.Meeting.Resp.Tent", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Resp.Pos", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Resp.Neg", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Request", ClassCheckChar), _
-            Left("IPM.Schedule.Meeting.Canceled", ClassCheckChar) 'Meeting
-            OLItemDate = Format(OLItem.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.StickyNote", ClassCheckChar) 'Note
-            OLItemDate = Format(OLItem.LastModificationTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.LastModificationTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
-        Case Left("IPM.Task", ClassCheckChar) 'Task
-            OLItemDate = Format(OLItem.StartDate, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                Format(OLItem.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+    Select Case Left(OL_Item.MessageClass, Class_Check_Char)
+        Case Left("IPM.Appointment", Class_Check_Char) 'Appointment
+'Debug.Print "RecurrenceState: " & OL_Item.RecurrenceState
+            OL_Item_Date = OL_Item.Start
+        Case Left("IPM.Note", Class_Check_Char) 'Mail
+            OL_Item_Date = Format(OL_Item.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Schedule.Meeting.Resp.Tent", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Resp.Pos", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Resp.Neg", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Request", Class_Check_Char), _
+            Left("IPM.Schedule.Meeting.Canceled", Class_Check_Char) 'Meeting
+            OL_Item_Date = Format(OL_Item.ReceivedTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.ReceivedTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.StickyNote", Class_Check_Char) 'Note
+            OL_Item_Date = Format(OL_Item.LastModificationTime, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.LastModificationTime, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
+        Case Left("IPM.Task", Class_Check_Char) 'Task
+            OL_Item_Date = Format(OL_Item.StartDate, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                Format(OL_Item.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
         Case Else
     End Select
 
-    ItemDateOnly = TextToDateTime(OLItemDate)
+    Item_Date_Only = Text_To_Date_Time(OL_Item_Date)
     
 NetworkError:
 If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
-    MsgBox "Hmmm..., AddToShortItemDateArray"
+    MsgBox "Hmmm..., Add_To_Short_Item_DateArray"
 End If
-'Debug.Print "############# " & "AddToShortItemDateArray"
-'Debug.Print "UBound(ItemShortArray): " & UBound(ItemShortArray)
-'Debug.Print "############# " & "AddToShortItemDateArray"
+'Debug.Print "############# " & "Add_To_Short_Item_DateArray"
+'Debug.Print "UBound(Item_Short_Array): " & UBound(Item_Short_Array)
+'Debug.Print "############# " & "Add_To_Short_Item_DateArray"
 End Sub
