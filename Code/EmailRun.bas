@@ -1,266 +1,300 @@
-Attribute VB_Name = "EmailRun"
 'https://docs.microsoft.com/en-us/office/vba/api/overview/outlook
 Option Explicit
 
 Public fso As Scripting.FileSystemObject ' add MS scripting Runtime
-Public HDDMainFolder As Scripting.Folder
-Public HDDSubFolder As Scripting.Folder
+Public HDD_Main_Folder As Scripting.Folder
+Public HDD_Sub_Folder As Scripting.Folder
 
-Public OutlookAccountFolder As Outlook.MAPIFolder
-Public OutlookMainFolder As Outlook.MAPIFolder
-Public OutlookCurrentFolder As Outlook.MAPIFolder
-Public OutlookSubFolder As Outlook.MAPIFolder
+Public Outlook_Account_Folder As Outlook.MAPIFolder
+Public Outlook_Main_Folder As Outlook.MAPIFolder
+Public Outlook_Current_Folder As Outlook.MAPIFolder
+Public Outlook_Sub_Folder As Outlook.MAPIFolder
 
-Public LastFoundWasAt As Double
+Public Last_Found_Was_At As Double
 
-Public OutlookFolderCount As Double
-Public OutlookItemCount As Double
-Public HDDFolderCount As Double
-Public HDDFileCount As Double
-Public HDDFileCountToday As Double
-Public HDDFolderCountToday As Double
-Public SavedAlreadyCounter As Double
-Public SavedAlreadyFisrt As Double
-Public SavedAlreadyCurrent As Double
-Public OverlapDays As Double
-Public OverlapResaved As Double
-Public OverlapSubject As Double
+Public Outlook_Folder_Count As Double
+Public Outlook_Item_Count As Double
+Public HDD_Folder_Count As Double
+Public HDD_File_Count As Double
+Public HDD_File_Count_Today As Double
+Public HDD_Folder_Count_Today As Double
+Public Saved_Already_Counter As Double
+Public Saved_Already_First As Double
+Public Saved_Already_Current As Double
+Public Overlap_Days As Double
+Public Overlap_Resaved As Double
+Public Overlap_Subject As Double
 
-Public DefultBackupLocation As String
-Public DefultBackupLocationLog As String
-Public LastSavedItemDateLog As String
-Public InvalidFolders As Variant
-Public ValidItems As Variant
-Public ArchivedArray As Variant
-Public DefultFolder As String
-Public LogedinUserFileLocation As String
-Public MaxFolderNameLenght As Double
-Public MaxFileNameLenght As Double
-Public MinFileNameLenght As Double
-Public MaxPathLenght As Double
-Public MaxItemTo As Double
-Public MaxItemSize As Double
-Public ReplaceCharBy As String
-Public SuffixText As String
-Public ForceResave As Boolean
-Public SaveResult As String
-Public FileNumber As Double
-Public SaveItemsToHDD As Boolean
-Public LogFileFlow As String
-Public LogFileSum As String
-Public ErrorSkipCode As String
+Public Default_Backup_Location As String
+Public Default_Backup_Location_Log As String
+Public Last_Saved_Item_Date_Log As String
+Public Invalid_Folders As Variant
+Public Valid_Items As Variant
+Public Archived_Array As Variant
+Public Default_Folder As String
+Public Logged_In_User_File_Location As String
+Public Max_Folder_Name_Length As Double
+Public Max_File_Name_Length As Double
+Public Min_File_Name_Length As Double
+Public Max_Path_Length As Double
+Public Max_Item_To As Double
+Public Max_Item_Size As Double
+Public Replace_Char_By As String
+Public Suffix_Text As String
+Public Force_Resave As Boolean
+Public Save_Result As String
+Public File_Number As Double
+Public Save_Items_To_HDD As Boolean
+Public Log_File_Flow As String
+Public Log_File_Sum As String
+Public Error_Skip_Code As String
+Public Default_Config_File As String
 
-Public OutlookFolderCurrentCount  As Double
-Public OutlookItemCurrentCount  As Double
-Public OutlookItemCurrentCountToday  As Double
-Public OutlookItemCurrentCountTodayInFolder  As Double
-Public OutlookFolderCurrentCountToday As Double
-Public ProgressStartTime  As Double
-Public ProgressNowTime  As Double
-Public EndCode As Double
-Public RGBStepCount As Double
-Public NoOfLinesInFile As Double
-Public SeparatorInFile As String
-Public OutlookItemSavedAlready As Boolean
+Public Outlook_Folder_Current_Count  As Double
+Public Outlook_Item_Current_Count  As Double
+Public Outlook_Item_Current_Count_Today  As Double
+Public Outlook_Item_Current_Count_Today_In_Folder  As Double
+Public Outlook_Folder_Current_Count_Today As Double
+Public Progress_Start_Time  As Double
+Public Progress_Now_Time  As Double
+Public End_Code As Double
+Public RGB_Step_Count As Double
+Public No_Of_Lines_In_File As Double
+Public Separator_In_File As String
+Public Outlook_Item_Saved_Already As Boolean
 
-Public LogArray As Variant
-Public ItemArray As Variant
-Public ItemShortArray As Variant
-Public FileArray As Variant
-Public ArchivedLogArray As Variant
-Public ArchivedFileArray As Variant
-Public EndMessage As Boolean
-Public FromNewToOld As Boolean
-Public AutoRun As Boolean
-Public ItemArrayHeading As Variant
-Public FileArrayHeading As Variant
-Public LinkToGitHub As String
-Public UndeliverableError As String
-Public DateError As Boolean
-Public LastItemCheckedDate As Double
-Public ItemDateOnly As Double
+Public Log_Array As Variant
+Public Item_Array As Variant
+Public Item_Short_Array As Variant
+Public File_Array As Variant
+Public Archived_Log_Array As Variant
+Public Archived_File_Array As Variant
+Public End_Message As Boolean
+Public From_New_To_Old As Boolean
+Public Auto_Run As Boolean
+Public Item_Array_Heading As Variant
+Public File_Array_Heading As Variant
+Public Link_To_Git_Hub As String
+Public Undeliverable_Error As String
+Public Date_Error As Boolean
+Public Last_Item_Checked_Date As Double
+Public Item_Date_Only As Double
 
-Sub WipeMeClean()
+Sub Wipe_Me_Clean()
 'Cleans variables (in case of previous unfinished runs)
-    Set HDDMainFolder = Nothing
-    Set HDDSubFolder = Nothing
-    Set OutlookAccountFolder = ActiveOutlookAccount
-    Set OutlookMainFolder = Nothing
-    Set OutlookCurrentFolder = Nothing
-    Set OutlookSubFolder = Nothing
+    Set HDD_Main_Folder = Nothing
+    Set HDD_Sub_Folder = Nothing
+    Set Outlook_Account_Folder = Active_Outlook_Account
+    Set Outlook_Main_Folder = Nothing
+    Set Outlook_Current_Folder = Nothing
+    Set Outlook_Sub_Folder = Nothing
     
-    OutlookFolderCount = 0
-    OutlookItemCount = 0
-    HDDFolderCount = 0
-    HDDFileCount = 0
-    EndCode = 0
-    SavedAlreadyCounter = 0
-    LastFoundWasAt = 0
-    LogArray = Empty
-    ItemArray = Empty
-    ArchivedLogArray = Empty
-    ArchivedFileArray = Empty
-'Debug.Print "############# " & "WipeMeClean"
+    Outlook_Folder_Count = 0
+    Outlook_Item_Count = 0
+    HDD_Folder_Count = 0
+    HDD_File_Count = 0
+    End_Code = 0
+    Saved_Already_Counter = 0
+    Last_Found_Was_At = 0
+    Log_Array = Empty
+    Item_Array = Empty
+    Archived_Log_Array = Empty
+    Archived_File_Array = Empty
+'Debug.Print "############# " & "Wipe_Me_Clean"
 End Sub
 
-Sub SetConfig()
+Sub Set_Config()
 'Sets basic boundaries
     Set fso = New Scripting.FileSystemObject
     
-    SuffixText = "..."
-    ReplaceCharBy = "_"
-    SeparatorInFile = Chr(9)
-    MaxFolderNameLenght = 100
-    MaxFileNameLenght = 200
-    MinFileNameLenght = 40
-    MaxPathLenght = 240
-    MaxItemTo = 250
-    MaxItemSize = 25000000 '25MB
-    OverlapDays = 7
-    OverlapResaved = 100
-    OverlapSubject = 20
-
-    DefultFolder = "Desktop\eMails"
-    LogedinUserFileLocation = CStr(Environ("USERPROFILE"))
-    DefultBackupLocation = LogedinUserFileLocation & "\" & DefultFolder
-    DefultBackupLocationLog = DefultBackupLocation & "\" & "Logs"
-    SaveItemsToHDD = True
-    ForceResave = False
-    LogFileSum = "Log of Saved Outlook Items"
-    LastSavedItemDateLog = "LastCheckedItemDate"
-    LinkToGitHub = "https://github.com/licyp/SaveOutlookEmails"
-
-'https://docs.microsoft.com/en-us/office/vba/api/outlook.oldefaultfolders
-'Name    Value   Folder Name Description
-'olFolderConflicts   19  Conflicts   The Conflicts folder (subfolder of the Sync Issues folder). Only available for an Exchange account.
-'olFolderContacts    10  Contacts    The Contacts folder.
-'olFolderDeletedItems    3   Deleted Items   The Deleted Items folder.
-'olFolderJournal 11  Journal The Journal folder.
-'olFolderJunk    23  Junk E-Mail The Junk E-Mail folder.
-'olFolderLocalFailures   21  Local Failures  The Local Failures folder (subfolder of the Sync Issues folder). Only available for an Exchange account.
-'olFolderRssFeeds    25  RSS Feeds   The RSS Feeds folder.
-'olFolderServerFailures  22  Server Failures The Server Failures folder (subfolder of the Sync Issues folder). Only available for an Exchange account.
-'olFolderSuggestedContacts   30  Suggested Contacts  The Suggested Contacts folder.
-'olFolderSyncIssues  20  Sync Issues The Sync Issues folder. Only available for an Exchange account.
-'olFolderManagedEmail    29      The top-level folder in the Managed Folders group. For more information on Managed Folders, see the Help in Microsoft Outlook. Only available for an Exchange account.
-'olPublicFoldersAllPublicFolders 18      The All Public Folders folder in the Exchange Public Folders store. Only available for an Exchange account.
-'olFolderCalendar    9   Calendar    The Calendar folder.
-'olFolderDrafts  16  Drafts  The Drafts folder.
-'olFolderInbox   6   Inbox   The Inbox folder.
-'olFolderNotes   12  Notes   The Notes folder.
-'olFolderOutbox  4   Outbox  The Outbox folder.
-'olFolderSentMail    5   Sent Mail   The Sent Mail folder.
-'olFolderTasks   13  Tasks   The Tasks folder.
-'olFolderToDo    28  To Do   The To Do folder.
+    Suffix_Text = "..."
+    Replace_Char_By = "_"
+    Separator_In_File = Chr(9)
+    Max_Folder_Name_Length = 100
+    Max_File_Name_Length = 200
+    Min_File_Name_Length = 40
+    Max_Path_Length = 240
+    Max_Item_To = 250
+    Max_Item_Size = 25000000 '25MB
+    Overlap_Days = 7
+    Overlap_Resaved = 100
+    Overlap_Subject = 20
     
-    InvalidFolders = Array("Conflicts", "Contacts", "Journal", _
+    Default_Config_File = "SaveOutlookEmails.txt"
+    Logged_In_User_File_Location = CStr(Environ("USERPROFILE"))
+'    Default_Folder = "Desktop\eMails"
+'    Default_Backup_Location = Logged_In_User_File_Location & "\" & Default_Folder
+
+Dim Where As String
+Dim Whole_Line As String
+Dim i As Integer
+
+    Where = Logged_In_User_File_Location & "\" & Default_Config_File
+
+    File_Number = FreeFile
+    If fso.FileExists(Where) Then
+        Open Where For Input As #File_Number
+        Do Until EOF(1)
+            Line Input #File_Number, Whole_Line
+            i = i + 1
+            If i = 1 Then
+                Default_Backup_Location = Whole_Line
+            Else
+            End If
+        Loop
+        Close #File_Number
+    Else
+        Default_Folder = "Desktop\eMails"
+        Default_Backup_Location = Logged_In_User_File_Location & "\" & Default_Folder
+
+        Open Where For Output Access Write As #File_Number
+            Print #File_Number, Default_Backup_Location
+            Print #File_Number, ""
+            Print #File_Number, "The first lice is used for SaveOutlookEmails bakcup location."
+            Print #File_Number, "It should look like:"
+            Print #File_Number, "C:\Users\[Your-Name]\Desktop\eMails"
+            Print #File_Number, "C:\Users[Your-Name]\OneDrive - [Company-Name]\eMails"
+        Close #File_Number
+    End If
+
+    Default_Backup_Location_Log = Default_Backup_Location & "\" & "Logs"
+    Save_Items_To_HDD = True
+    Force_Resave = False
+    Log_File_Sum = "Log of Saved Outlook Items"
+    Last_Saved_Item_Date_Log = "Last_Checked_Item_Date"
+    Link_To_Git_Hub = "https://github.com/licyp/SaveOutlookEmails"
+
+'https://docs.microsoft.com/en-us/office/vba/api/outlook.olDefault_Folders
+'Name    Value   Folder Name Description
+'OL_FolderConflicts   19  Conflicts   The Conflicts folder (subfolder of the Sync Issues folder). Only available for an Exchange account.
+'OL_FolderContacts    10  Contacts    The Contacts folder.
+'OL_FolderDeletedItems    3   Deleted Items   The Deleted Items folder.
+'OL_FolderJournal 11  Journal The Journal folder.
+'OL_FolderJunk    23  Junk E-Mail The Junk E-Mail folder.
+'OL_FolderLocalFailures   21  Local Failures  The Local Failures folder (subfolder of the Sync Issues folder). Only available for an Exchange account.
+'OL_FolderRssFeeds    25  RSS Feeds   The RSS Feeds folder.
+'OL_FolderServerFailures  22  Server Failures The Server Failures folder (subfolder of the Sync Issues folder). Only available for an Exchange account.
+'OL_FolderSuggestedContacts   30  Suggested Contacts  The Suggested Contacts folder.
+'OL_FolderSyncIssues  20  Sync Issues The Sync Issues folder. Only available for an Exchange account.
+'OL_FolderManagedEmail    29      The top-level folder in the Managed Folders group. For more information on Managed Folders, see the Help in Microsoft Outlook. Only available for an Exchange account.
+'olPublicFoldersAllPublicFolders 18      The All Public Folders folder in the Exchange Public Folders store. Only available for an Exchange account.
+'OL_FolderCalendar    9   Calendar    The Calendar folder.
+'OL_FolderDrafts  16  Drafts  The Drafts folder.
+'OL_FolderInbox   6   Inbox   The Inbox folder.
+'OL_FolderNotes   12  Notes   The Notes folder.
+'OL_FolderOutbox  4   Outbox  The Outbox folder.
+'OL_FolderSentMail    5   Sent Mail   The Sent Mail folder.
+'OL_FolderTasks   13  Tasks   The Tasks folder.
+'OL_FolderToDo    28  To Do   The To Do folder.
+    
+    Invalid_Folders = Array("Conflicts", "Contacts", "Journal", _
         "Junk E-Mail", "Local Failures", "RSS Feeds", "Server Failures", _
         "Suggested Contacts", "Sync Issues", "Recipient Cache") '"Deleted Items",
-    ValidItems = Array("IPM.Appointment", "IPM.Schedule", "IPM.Note", "IPM.Task", "IPM.StickyNote") ' Start with
-    ArchivedArray = Array("EAS") ' End with
-    ItemArrayHeading = Array("Backup Status", "Error", _
-        "Fodler", "Fodler Validity", "Item Count", _
+    Valid_Items = Array("IPM.Appointment", "IPM.Schedule", "IPM.Note", "IPM.Task", "IPM.StickyNote") ' Start with
+    Archived_Array = Array("EAS") ' End with
+    Item_Array_Heading = Array("Backup Status", "Error", _
+        "Folder", "Folder Validity", "Item Count", _
         "Title", "Date", "Unread", "From", "To", "Shortened Title", _
         "Type", "Type Validity", "Size", "Size Validity", _
         "Recipients Count", "Recipients Validity", _
         "Path on Drive", "Path Validity")
-    FileArrayHeading = Array("Date", "Subject", "Path")
-    UndeliverableError = "Undeliverable_"
+    File_Array_Heading = Array("Date", "Subject", "Path")
+    Undeliverable_Error = "Undeliverable_"
     
-    Call CreateHDDFolder(DefultBackupLocationLog)
-    Call ReadLastItemDateLog(DefultBackupLocationLog & "\" & LastSavedItemDateLog & ".txt")
-'    If fso.FileExists(DefultBackupLocationLog & "\" & LogFileSum & ".txt") = False Then
-'        Call BuildHDDArray(DefultBackupLocation, DefultBackupLocationLog & "\" & LogFileSum & ".txt")
+    Call Create_HDD_Folder(Default_Backup_Location_Log)
+    Call Read_Last_Item_Date_Log(Default_Backup_Location_Log & "\" & Last_Saved_Item_Date_Log & ".txt")
+'    If fso.FileExists(Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt") = False Then
+'        Call Build_HDD_Array(Default_Backup_Location, Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt")
 '    End If
         
-'Debug.Print "############# " & "SetConfig"
+'Debug.Print "############# " & "Set_Config"
 End Sub
 
-Sub QuickAccessSaveEmails()
+Sub Quick_Access_Save_Emails()
 'Sub to be used on QuickLunch
-Dim MsgBoxTitle As String
-Dim MsgBoxButtons As String
-Dim MsgBoxText As String
-Dim MsgBoxResponse As Double
-    Call WipeMeClean
-    Call SetConfig
-    EndMessage = True
-    FromNewToOld = False
-    AutoRun = False
+Dim Msg_Box_Title As String
+Dim Msg_Box_Buttons As String
+Dim Msg_Box_Text As String
+Dim Msg_Box_Response As Double
+    Call Wipe_Me_Clean
+    Call Set_Config
+    End_Message = True
+    From_New_To_Old = False
+    Auto_Run = False
 'Reset log file?
-    MsgBoxButtons = vbYesNo + vbExclamation + vbDefaultButton1
-    MsgBoxTitle = "Reset Log File"
-    MsgBoxText = "Do you want to reset log file?" & vbNewLine & vbNewLine & _
+    Msg_Box_Buttons = vbYesNo + vbExclamation + vbDefaultButton1
+    Msg_Box_Title = "Reset Log File"
+    Msg_Box_Text = "Do you want to reset log file?" & vbNewLine & vbNewLine & _
         "It will speed up scanning already saved files;" & vbNewLine & _
         "only needs doing when scan is slow."
     
-    MsgBoxResponse = MsgBox(MsgBoxText, MsgBoxButtons, MsgBoxTitle)
-    If MsgBoxResponse = 6 Then
-        Call BuildHDDArray
+    Msg_Box_Response = MsgBox(Msg_Box_Text, Msg_Box_Buttons, Msg_Box_Title)
+    If Msg_Box_Response = 6 Then
+        Call Build_HDD_Array
     Else
     End If
     
-    Call BackUpOutlookFolder(AutoRun)
+    Call Back_Up_Outlook_Folder(Auto_Run)
 End Sub
 
-Sub BackUpOutlookFolder(Optional AutoRun As Boolean)
-    Call WipeMeClean
-    Call SetConfig
-Dim MsgBoxTitle As String
-Dim MsgBoxButtons As String
-Dim MsgBoxText As String
-Dim MsgBoxResponse As Double
+Sub Back_Up_Outlook_Folder(Optional Auto_Run As Boolean)
+    Call Wipe_Me_Clean
+    Call Set_Config
+Dim Msg_Box_Title As String
+Dim Msg_Box_Buttons As String
+Dim Msg_Box_Text As String
+Dim Msg_Box_Response As Double
 
-If AutoRun = True Then
-    MsgBoxResponse = 6
-    GoTo BackUpMainAccount
+If Auto_Run = True Then
+    Msg_Box_Response = 6
+    GoTo Back_Up_Main_Account
 End If
 'Set folder to back up
 StartAgain:
-    MsgBoxButtons = vbYesNoCancel + vbQuestion + vbDefaultButton1
-    MsgBoxTitle = "Backup Outlook Folder"
-    MsgBoxText = "Back up '" & OutlookAccountFolder & "' folder instead?"
+    Msg_Box_Buttons = vbYesNoCancel + vbQuestion + vbDefaultButton1
+    Msg_Box_Title = "Backup Outlook Folder"
+    Msg_Box_Text = "Back up '" & Outlook_Account_Folder & "' folder instead?"
 
-    Set OutlookCurrentFolder = Outlook.Application.Session.PickFolder
-    If OutlookCurrentFolder Is Nothing Then
-        MsgBoxResponse = MsgBox(MsgBoxText, MsgBoxButtons, MsgBoxTitle)
+    Set Outlook_Current_Folder = Outlook.Application.Session.PickFolder
+    If Outlook_Current_Folder Is Nothing Then
+        Msg_Box_Response = MsgBox(Msg_Box_Text, Msg_Box_Buttons, Msg_Box_Title)
 
-BackUpMainAccount:
-        Select Case MsgBoxResponse
+Back_Up_Main_Account:
+        Select Case Msg_Box_Response
         Case 6 'Yes
-            Set OutlookCurrentFolder = OutlookAccountFolder
+            Set Outlook_Current_Folder = Outlook_Account_Folder
         Case 7 'No
             GoTo StartAgain
         Case 2 'Cancel
-            Call WipeMeClean
+            Call Wipe_Me_Clean
             Exit Sub
         End Select
     Else
     End If
     
 'Is chosen folder valid folder for backup?
-    MsgBoxButtons = vbOKOnly + vbExclamation + vbDefaultButton1
-    MsgBoxTitle = "Backup Outlook Folder"
-    MsgBoxText = "Selected '" & OutlookCurrentFolder & "' folder is not valid for backup."
-    If ValidOutlookFolder(OutlookCurrentFolder) = False Then
-        MsgBox MsgBoxText, MsgBoxButtons, MsgBoxTitle
+    Msg_Box_Buttons = vbOKOnly + vbExclamation + vbDefaultButton1
+    Msg_Box_Title = "Backup Outlook Folder"
+    Msg_Box_Text = "Selected '" & Outlook_Current_Folder & "' folder is not valid for backup."
+    If Valid_Outlook_Folder(Outlook_Current_Folder) = False Then
+        MsgBox Msg_Box_Text, Msg_Box_Buttons, Msg_Box_Title
         GoTo StartAgain
     Else
     End If
 
-    Call SetBackupPgogressBarData
-    Set OutlookMainFolder = TopOutlookFolder(OutlookCurrentFolder)
+    Call Set_Backup_Progress_Bar_Data
+    Set Outlook_Main_Folder = Top_Outlook_Folder(Outlook_Current_Folder)
     
-    Call OutlookFolderItemCount(OutlookCurrentFolder)
-    Call CreateHDDFolderForOutlookFolder(OutlookCurrentFolder)
-    Call HDDFolderItemCount(DefultBackupLocation & "\" & CleanOutlookFullPathName(OutlookCurrentFolder))
-    Call LogFileCreateWithHeading(DefultBackupLocationLog & "\" & LogFileSum & ".txt", FileArrayHeading)
-    Call ReadHDDInAsArray(DefultBackupLocationLog & "\" & LogFileSum & ".txt")
-    Call LogFileOpen(DefultBackupLocationLog & "\" & LogFileSum & ".txt")
-    Call LoopOutlookFolders(OutlookCurrentFolder, SaveItemsToHDD)
-    Call LogFileClose
+    Call Outlook_Folder_Item_Count(Outlook_Current_Folder)
+    Call Create_HDD_Folder_For_Outlook_Folder(Outlook_Current_Folder)
+    Call HDD_Folder_Item_Count(Default_Backup_Location & "\" & Clean_Outlook_Full_Path_Name(Outlook_Current_Folder))
+    Call Log_File_Create_With_Heading(Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt", File_Array_Heading)
+    Call Read_HDD_In_As_Array(Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt")
+    Call Log_File_Open(Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt")
+    Call Loop_Outlook_Folders(Outlook_Current_Folder, Save_Items_To_HDD)
+    Call Log_File_Close
     
-    Select Case EndCode
+    Select Case End_Code
         Case 1
             Unload BackupBar
             MsgBox "Cancelled"
@@ -268,294 +302,310 @@ BackUpMainAccount:
             Unload BackupBar
             MsgBox "Red cross"
         Case Else
-            If EndMessage = False Then
+            If End_Message = False Then
                 Unload BackupBar
             Else
                 Unload BackupBar
-                If AutoRun = False Then
-                    Call WipeMeClean
-                    Call SetConfig
-                    Call SetBackupPgogressBarData
-                    Call ReadHDDInAsArray(DefultBackupLocationLog & "\" & LogFileSum & ".txt")
-                    Call RebuildLogFile
+                If Auto_Run = False Then
+                    Call Wipe_Me_Clean
+                    Call Set_Config
+                    Call Set_Backup_Progress_Bar_Data
+                    Call Read_HDD_In_As_Array(Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt")
+                    Call Rebuild_Log_File
                 End If
-                MsgBox "All done"
+                Call MsgBox_All_Done
+'                MsgBox "All done"
             End If
     End Select
     
-    If AutoRun = False Then
-        Call LogLastItemChecked(DefultBackupLocationLog & "\" & LastSavedItemDateLog & ".txt")
+    If Auto_Run = False Then
+        Call Log_Last_Item_Checked(Default_Backup_Location_Log & "\" & Last_Saved_Item_Date_Log & ".txt")
     End If
-    Call WipeMeClean
+    Call Wipe_Me_Clean
     
-'Debug.Print "############# " & "BackUpOutlookFolder"
-'Debug.Print "OutlookAccountFolder: " & OutlookAccountFolder
-'Debug.Print "MsgBoxResponse: " & MsgBoxResponse
-'Debug.Print "OutlookCurrentFolder: " & OutlookCurrentFolder
-'Debug.Print "OutlookMainFolder: " & OutlookMainFolder
-'Debug.Print "FullPathOutlookFolder: " & FullPathOutlookFolder(OutlookCurrentFolder)
-'Debug.Print "CleanOutlookFullPathName: " & CleanOutlookFullPathName(OutlookCurrentFolder)
-'Debug.Print "OutlookFolderCount: " & OutlookFolderCount
-'Debug.Print "OutlookItemCount: " & OutlookItemCount
-'Debug.Print "DefultBackupLocation: " & DefultBackupLocation
-'Debug.Print "HDDFolderCount: " & HDDFolderCount
-'Debug.Print "HDDFileCount: " & HDDFileCount
-'Debug.Print "############# " & "BackUpOutlookFolder"
+'Debug.Print "############# " & "Back_Up_Outlook_Folder"
+'Debug.Print "Outlook_Account_Folder: " & Outlook_Account_Folder
+'Debug.Print "Msg_Box_Response: " & Msg_Box_Response
+'Debug.Print "Outlook_Current_Folder: " & Outlook_Current_Folder
+'Debug.Print "Outlook_Main_Folder: " & Outlook_Main_Folder
+'Debug.Print "Full_Path_Outlook_Folder: " & Full_Path_Outlook_Folder(Outlook_Current_Folder)
+'Debug.Print "Clean_Outlook_Full_Path_Name: " & Clean_Outlook_Full_Path_Name(Outlook_Current_Folder)
+'Debug.Print "Outlook_Folder_Count: " & Outlook_Folder_Count
+'Debug.Print "Outlook_Item_Count: " & Outlook_Item_Count
+'Debug.Print "Default_Backup_Location: " & Default_Backup_Location
+'Debug.Print "HDD_Folder_Count: " & HDD_Folder_Count
+'Debug.Print "HDD_File_Count: " & HDD_File_Count
+'Debug.Print "############# " & "Back_Up_Outlook_Folder"
 End Sub
 
-Sub LoopOutlookFolders(LoopOutlookFoldersInput As Outlook.MAPIFolder, SaveItem As Boolean)
-Dim FolderLoop As Outlook.MAPIFolder
-Dim SubFolderLoop As Outlook.MAPIFolder
+Sub MsgBox_All_Done()
+    Dim Ask_Time As Integer
+    Dim Info_Box As Object
+    
+    Set Info_Box = CreateObject("WScript.Shell")
+    
+    'Set the message box to close after 1 seconds
+    Ask_Time = 1
+    Select Case Info_Box.Popup("All done", Ask_Time, "All done", 0)
+        Case 1, -1
+            Exit Sub
+    End Select
+End Sub
+
+
+Sub Loop_Outlook_Folders(Loop_Outlook_Folders_Input As Outlook.MAPIFolder, Save_Item As Boolean)
+Dim Folder_Loop As Outlook.MAPIFolder
+Dim Sub_Folder_Loop As Outlook.MAPIFolder
 Dim i As Double
 Dim k As Double
-Dim iShortCut As Double
-Dim iShortCutStep As Double
+Dim i_Short_Cut As Double
+Dim i_Short_Cut_Step As Double
 
-    Set FolderLoop = LoopOutlookFoldersInput
-    If ValidOutlookFolder(FolderLoop) = True Then
-        OutlookFolderCurrentCountToday = OutlookFolderCurrentCountToday + 1
-        If FromNewToOld = False Then
+    Set Folder_Loop = Loop_Outlook_Folders_Input
+    If Valid_Outlook_Folder(Folder_Loop) = True Then
+        Outlook_Folder_Current_Count_Today = Outlook_Folder_Current_Count_Today + 1
+        If From_New_To_Old = False Then
 'Add shortcut########################################################################################
-            If FolderLoop.Items.Count > 100 And ForceResave = False And AutoRun = False Then
-                iShortCutStep = 1
-                HDDFileCount = 100
-                For k = 1 To 100 - iShortCutStep Step iShortCutStep
-                    HDDFileCountToday = k
-                    Call AddToShortItemDate(FolderLoop, FolderLoop.Items(Round(FolderLoop.Items.Count / 100 * k)))
-'Debug.Print Round(FolderLoop.Items.Count / 100 * k) & " at : " & k
-                    For i = 1 To UBound(ArchivedFileArray, 2)
-                        If ArchivedFileArray(0, i) = Format(ItemDateOnly, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
-                                Format(ItemDateOnly, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem) Then
-                            iShortCut = k
-                            ProgressNowTime = Now()
-                            Call UpdateHDDProgressBar(FolderLoop, " ", "Check already saved items")
+            If Folder_Loop.Items.Count > 100 And Force_Resave = False And Auto_Run = False Then
+                i_Short_Cut_Step = 1
+                HDD_File_Count = 100
+                For k = 1 To 100 - i_Short_Cut_Step Step i_Short_Cut_Step
+                    HDD_File_Count_Today = k
+                    Call Add_To_Short_Item_Date(Folder_Loop, Folder_Loop.Items(Round(Folder_Loop.Items.Count / 100 * k)))
+'Debug.Print Round(Folder_Loop.Items.Count / 100 * k) & " at : " & k
+                    For i = 1 To UBound(Archived_File_Array, 2)
+                        If Archived_File_Array(0, i) = Format(Item_Date_Only, "yyyy.mm.dd", vbUseSystemDayOfWeek, vbUseSystem) & "-" & _
+                                Format(Item_Date_Only, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem) Then
+                            i_Short_Cut = k
+                            Progress_Now_Time = Now()
+                            Call Update_HDD_Progress_Bar(Folder_Loop, " ", "Check already saved items")
                             DoEvents
                         End If
                     Next
-                    If k > iShortCut Then
-                        iShortCut = Round(FolderLoop.Items.Count / 100 * (iShortCut - iShortCutStep))
+                    If k > i_Short_Cut Then
+                        i_Short_Cut = Round(Folder_Loop.Items.Count / 100 * (i_Short_Cut - i_Short_Cut_Step))
                         GoTo ShortCut
                     End If
                 Next
         End If
 ShortCut:
             Unload BackupBar
-            Call SetBackupPgogressBarData
-            If iShortCut <= 0 Then
+            Call Set_Backup_Progress_Bar_Data
+            If i_Short_Cut <= 0 Then
                 i = 1
             Else
-                i = iShortCut
-                OutlookItemCurrentCountToday = i - 1
+                i = i_Short_Cut
+                Outlook_Item_Current_Count_Today = i - 1
             End If
 'Add shortcut########################################################################################
-            For i = i To FolderLoop.Items.Count 'from old to new
-                DateError = False
-'Checks autorun overlap and stop scanning Outlook folder
-                If ForceResave = False And AutoRun = True And _
-                    SavedAlreadyCounter > OverlapResaved And Abs(SavedAlreadyCurrent - SavedAlreadyFisrt) > OverlapDays Then
+            For i = i To Folder_Loop.Items.Count 'from old to new
+                Date_Error = False
+'Checks Auto_Run overlap and stop scanning Outlook folder
+                If Force_Resave = False And Auto_Run = True And _
+                    Saved_Already_Counter > Overlap_Resaved And Abs(Saved_Already_Current - Saved_Already_First) > Overlap_Days Then
                     Exit Sub
                 End If
 'If cancelled or red cross exist then stop
-                If EndCode = 1 Or EndCode = 2 Then
+                If End_Code = 1 Or End_Code = 2 Then
                     Exit Sub
                 End If
 'Check file existence
-                Call AddToShortItemArray(FolderLoop, FolderLoop.Items(i))
-                If Left(ItemShortArray(1), Len(UndeliverableError)) = UndeliverableError Then
+                Call Add_To_Short_Item_Array(Folder_Loop, Folder_Loop.Items(i))
+                If Left(Item_Short_Array(1), Len(Undeliverable_Error)) = Undeliverable_Error Then
                     GoTo NextItemON
                 End If
-                Call FileExistsInLogOrHDD
-                If OutlookItemSavedAlready = True And ForceResave = False Then
-                    SaveResult = "Saved Already"
-                    SavedAlreadyCounter = SavedAlreadyCounter + 1
-                    If DateError = False Then
-                        If SavedAlreadyCounter = 1 Then
-                            SavedAlreadyFisrt = TextToDateTime(ItemShortArray(0) & " ")
+                Call File_Exists_In_Log_Or_HDD
+                If Outlook_Item_Saved_Already = True And Force_Resave = False Then
+                    Save_Result = "Saved Already"
+                    Saved_Already_Counter = Saved_Already_Counter + 1
+                    If Date_Error = False Then
+                        If Saved_Already_Counter = 1 Then
+                            Saved_Already_First = Text_To_Date_Time(Item_Short_Array(0) & " ")
                         Else
-                            SavedAlreadyCurrent = TextToDateTime(ItemShortArray(0) & " ")
+                            Saved_Already_Current = Text_To_Date_Time(Item_Short_Array(0) & " ")
                         End If
                     End If
                 Else
-                    SavedAlreadyCounter = 0
+                    Saved_Already_Counter = 0
 'Read full Outlook item data
-                    Call AddToItemArray(FolderLoop, FolderLoop.Items(i))
-                    If SaveItem = True And ItemArray(1) = "OK" Then
+                    Call Add_To_Item_Array(Folder_Loop, Folder_Loop.Items(i))
+                    If Save_Item = True And Item_Array(1) = "OK" Then
 'Save item
-                        Call SaveOutlookItem(FolderLoop.Items(i), ForceResave, ItemArray)
-                        ItemArray(0) = SaveResult
-                        If ErrorSkipCode <> "" Then
-                            ItemArray(1) = ErrorSkipCode
+                        Call Save_Outlook_Item(Folder_Loop.Items(i), Force_Resave, Item_Array)
+                        Item_Array(0) = Save_Result
+                        If Error_Skip_Code <> "" Then
+                            Item_Array(1) = Error_Skip_Code
                         Else
 'Add successful file save to log file
-                            Call LogFileAddLine(ItemShortArray)
+                            Call Log_File_Add_Line(Item_Short_Array)
                         End If
                     End If
                 End If
-                OutlookItemCurrentCountTodayInFolder = i
-                OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
+                Outlook_Item_Current_Count_Today_In_Folder = i
+                Outlook_Item_Current_Count_Today = Outlook_Item_Current_Count_Today + 1
 'Update progress bar
 NextItemON:
-                ProgressNowTime = Now()
-                Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
+                Progress_Now_Time = Now()
+                Call Update_Backup_Progress_Bar(Folder_Loop, Folder_Loop.Items(i))
                 DoEvents
-'Debug.Print "SavedAlreadyCounter: " & SavedAlreadyCounter
+'Debug.Print "Saved_Already_Counter: " & Saved_Already_Counter
             Next
         Else
-            For i = FolderLoop.Items.Count To 1 Step -1 'new old to old
-                DateError = False
-'Checks autorun overlap and stop scanning Outlook folder
-                If ForceResave = False And AutoRun = True And _
-                    SavedAlreadyCounter > OverlapResaved And Abs(SavedAlreadyCurrent - SavedAlreadyFisrt) > OverlapDays Then
+            For i = Folder_Loop.Items.Count To 1 Step -1 'new old to old
+                Date_Error = False
+'Checks Auto_Run overlap and stop scanning Outlook folder
+                If Force_Resave = False And Auto_Run = True And _
+                    Saved_Already_Counter > Overlap_Resaved And Abs(Saved_Already_Current - Saved_Already_First) > Overlap_Days Then
                     Exit Sub
                 End If
 'If cancelled or red cross exist then stop
-                If EndCode = 1 Or EndCode = 2 Then
+                If End_Code = 1 Or End_Code = 2 Then
                     Exit Sub
                 End If
 'Check file existence
-                Call AddToShortItemArray(FolderLoop, FolderLoop.Items(i))
-                If Left(ItemShortArray(1), Len(UndeliverableError)) = UndeliverableError Then
+                Call Add_To_Short_Item_Array(Folder_Loop, Folder_Loop.Items(i))
+                If Left(Item_Short_Array(1), Len(Undeliverable_Error)) = Undeliverable_Error Then
                     GoTo NextItemNO
                 End If
-                Call FileExistsInLogOrHDD
-                If OutlookItemSavedAlready = True And ForceResave = False Then
-                    SaveResult = "Saved Already"
-                    SavedAlreadyCounter = SavedAlreadyCounter + 1
-                    If DateError = False Then
-                        If SavedAlreadyCounter = 1 Then
-                            SavedAlreadyFisrt = TextToDateTime(ItemShortArray(0) & " ")
+                Call File_Exists_In_Log_Or_HDD
+                If Outlook_Item_Saved_Already = True And Force_Resave = False Then
+                    Save_Result = "Saved Already"
+                    Saved_Already_Counter = Saved_Already_Counter + 1
+                    If Date_Error = False Then
+                        If Saved_Already_Counter = 1 Then
+                            Saved_Already_First = Text_To_Date_Time(Item_Short_Array(0) & " ")
                         Else
-                            SavedAlreadyCurrent = TextToDateTime(ItemShortArray(0) & " ")
+                            Saved_Already_Current = Text_To_Date_Time(Item_Short_Array(0) & " ")
                         End If
                     End If
                 Else
-                    SavedAlreadyCounter = 0
+                    Saved_Already_Counter = 0
 'Read full Outlook item data
-                    Call AddToItemArray(FolderLoop, FolderLoop.Items(i))
-                    If SaveItem = True And ItemArray(1) = "OK" Then
+                    Call Add_To_Item_Array(Folder_Loop, Folder_Loop.Items(i))
+                    If Save_Item = True And Item_Array(1) = "OK" Then
 'Save item
-                        Call SaveOutlookItem(FolderLoop.Items(i), ForceResave, ItemArray)
-                        ItemArray(0) = SaveResult
-                        If ErrorSkipCode <> "" Then
-                            ItemArray(1) = ErrorSkipCode
+                        Call Save_Outlook_Item(Folder_Loop.Items(i), Force_Resave, Item_Array)
+                        Item_Array(0) = Save_Result
+                        If Error_Skip_Code <> "" Then
+                            Item_Array(1) = Error_Skip_Code
                         Else
 'Add successful file save to log file
-                            Call LogFileAddLine(ItemShortArray)
+                            Call Log_File_Add_Line(Item_Short_Array)
                         End If
                     End If
                 End If
-                OutlookItemCurrentCountTodayInFolder = i
-                OutlookItemCurrentCountToday = OutlookItemCurrentCountToday + 1
+                Outlook_Item_Current_Count_Today_In_Folder = i
+                Outlook_Item_Current_Count_Today = Outlook_Item_Current_Count_Today + 1
 'Update progress bar
 NextItemNO:
-                ProgressNowTime = Now()
-                Call UpdateBackupProgressBar(FolderLoop, FolderLoop.Items(i))
+                Progress_Now_Time = Now()
+                Call Update_Backup_Progress_Bar(Folder_Loop, Folder_Loop.Items(i))
                 DoEvents
-'Debug.Print "SavedAlreadyCounter: " & SavedAlreadyCounter
+'Debug.Print "Saved_Already_Counter: " & Saved_Already_Counter
             Next
         End If
     Else
     End If
 'Process all folders and subfolders recursively
-    If FolderLoop.Folders.Count Then
-       For Each SubFolderLoop In FolderLoop.Folders
-           Call LoopOutlookFolders(SubFolderLoop, SaveItem)
+    If Folder_Loop.Folders.Count Then
+       For Each Sub_Folder_Loop In Folder_Loop.Folders
+           Call Loop_Outlook_Folders(Sub_Folder_Loop, Save_Item)
        Next
     End If
-'Debug.Print "############# " & "LoopOutlookFolders"
-'Debug.Print "LoopOutlookFoldersInput: " & LoopOutlookFoldersInput
-'Debug.Print "FolderLoop.Items(i): " & FolderLoop.Items(i).Subject
-'Debug.Print "UBound(LogArray, 1): " & UBound(LogArray, 1)
-'Debug.Print "SavedAlreadyCounter: " & SavedAlreadyCounter
-'Debug.Print "############# " & "LoopOutlookFolders"
+'Debug.Print "############# " & "Loop_Outlook_Folders"
+'Debug.Print "Loop_Outlook_Folders_Input: " & Loop_Outlook_Folders_Input
+'Debug.Print "Folder_Loop.Items(i): " & Folder_Loop.Items(i).Subject
+'Debug.Print "UBound(Log_Array, 1): " & UBound(Log_Array, 1)
+'Debug.Print "Saved_Already_Counter: " & Saved_Already_Counter
+'Debug.Print "############# " & "Loop_Outlook_Folders"
 End Sub
 
-Sub SaveOutlookItem(OutlookItemInput, ReSave As Boolean, ItemData)
-'Saves Outlook item if not exists or force resave=true; other attributes are used from ItemArray related to selected Outlook item
-Dim OutlookApp As Outlook.Application
-Dim ObjectInspector As Outlook.Inspector
-Dim ItemToBeSaved As Object
-Dim ItemToBeSavedOpen As Object
-Dim UnRead As Boolean
-Dim ItemStatus As String
-Dim SaveFileName As String
-Dim SavePathName As String
-Dim FileExists As Boolean
-Dim ArchivedItem As Boolean
+Sub Save_Outlook_Item(Outlook_Item_Input, Resave As Boolean, Item_Data)
+'Saves Outlook item if not exists or force Resave=true; other attributes are used from Item_Array related to selected Outlook item
+Dim Outlook_App As Outlook.Application
+Dim Object_Inspector As Outlook.Inspector
+Dim Item_To_Be_Saved As Object
+Dim Item_To_Be_Saved_Open As Object
+Dim Unread As Boolean
+Dim Item_Status As String
+Dim Save_File_Name As String
+Dim Save_Path_Name As String
+Dim File_Exists As Boolean
+Dim Archived_Item As Boolean
 
-    ErrorSkipCode = ""
-    Set OutlookApp = Outlook.Application
-    Set ItemToBeSaved = OutlookItemInput
+    Error_Skip_Code = ""
+    Set Outlook_App = Outlook.Application
+    Set Item_To_Be_Saved = Outlook_Item_Input
     Set fso = New Scripting.FileSystemObject
-    UnRead = ItemData(7)
-    ItemStatus = ItemData(0)
-    SavePathName = ItemData(17)
-    SaveFileName = ItemData(10)
-    ArchivedItem = ArchivedOutlookItem(ItemToBeSaved)
+    Unread = Item_Data(7)
+    Item_Status = Item_Data(0)
+    Save_Path_Name = Item_Data(17)
+    Save_File_Name = Item_Data(10)
+    Archived_Item = Archived_Outlook_Item(Item_To_Be_Saved)
 
-    If ItemStatus = "Error" Then
-        SaveResult = ItemStatus
+    If Item_Status = "Error" Then
+        Save_Result = Item_Status
     Else
-        If ReSave = True Then
-            If ArchivedItem = True Then
-                Set ObjectInspector = Nothing
-                ItemToBeSaved.Display
-                Do While ObjectInspector Is Nothing
-                    Set ObjectInspector = OutlookApp.ActiveInspector
+        If Resave = True Then
+            If Archived_Item = True Then
+                Set Object_Inspector = Nothing
+                Item_To_Be_Saved.Display
+                Do While Object_Inspector Is Nothing
+                    Set Object_Inspector = Outlook_App.ActiveInspector
                 Loop
-                Set ItemToBeSavedOpen = ObjectInspector.CurrentItem
+                Set Item_To_Be_Saved_Open = Object_Inspector.CurrentItem
             Else
-                Set ItemToBeSavedOpen = ItemToBeSaved
+                Set Item_To_Be_Saved_Open = Item_To_Be_Saved
             End If
-            ItemToBeSavedOpen.SaveAs SavePathName & SaveFileName, olMSG
-            If UnRead = True Then
-                ItemToBeSavedOpen.UnRead = True
+            Item_To_Be_Saved_Open.SaveAs Save_Path_Name & Save_File_Name, olMSG
+            If Unread = True Then
+                Item_To_Be_Saved_Open.Unread = True
             End If
-            If ArchivedItem = True Then
-                ItemToBeSavedOpen.Close olDiscard
+            If Archived_Item = True Then
+                Item_To_Be_Saved_Open.Close olDiscard
             Else
             End If
-            SaveResult = "Resaved"
+            Save_Result = "Resaved"
         Else
-            If ArchivedItem = True Then
-                Set ObjectInspector = Nothing
-                ItemToBeSaved.Display
-                Do While ObjectInspector Is Nothing
-                    Set ObjectInspector = OutlookApp.ActiveInspector
+            If Archived_Item = True Then
+                Set Object_Inspector = Nothing
+                Item_To_Be_Saved.Display
+                Do While Object_Inspector Is Nothing
+                    Set Object_Inspector = Outlook_App.ActiveInspector
                 Loop
-                Set ItemToBeSavedOpen = ObjectInspector.CurrentItem
+                Set Item_To_Be_Saved_Open = Object_Inspector.CurrentItem
             Else
-                Set ItemToBeSavedOpen = ItemToBeSaved
+                Set Item_To_Be_Saved_Open = Item_To_Be_Saved
             End If
 On Error GoTo SkipError
-            ItemToBeSavedOpen.SaveAs SavePathName & SaveFileName, olMSG
-            If UnRead = True Then
-                ItemToBeSavedOpen.UnRead = True
+            Item_To_Be_Saved_Open.SaveAs Save_Path_Name & Save_File_Name, olMSG
+            If Unread = True Then
+                Item_To_Be_Saved_Open.Unread = True
             End If
-            If ArchivedItem = True Then
-                ItemToBeSavedOpen.Close olDiscard
+            If Archived_Item = True Then
+                Item_To_Be_Saved_Open.Close olDiscard
             Else
             End If
-            SaveResult = "Saved"
+            Save_Result = "Saved"
         End If
     End If
     
 SkipError:
 If Err.Number <> 0 Then
-    ErrorSkipCode = Err.Number & " " & Err.Description
-    SaveResult = "Error"
+    Error_Skip_Code = Err.Number & " " & Err.Description
+    Save_Result = "Error"
 End If
-    Set OutlookApp = Nothing
-    Set ObjectInspector = Nothing
+    Set Outlook_App = Nothing
+    Set Object_Inspector = Nothing
     Set fso = Nothing
-    Set ItemToBeSaved = Nothing
-    Set ItemToBeSavedOpen = Nothing
-'Debug.Print "############# " & "SaveOutlookItem"
-'Debug.Print "OutlookItemInput: " & OutlookItemInput
-'Debug.Print "ReSave: " & ReSave
-'Debug.Print "ItemStatus: " & ItemStatus
-'Debug.Print "UnRead: " & UnRead
-'Debug.Print "SaveResult: " & SaveResult
-'Debug.Print SavePathName & SaveFileName
-'Debug.Print "############# " & "SaveOutlookItem"
+    Set Item_To_Be_Saved = Nothing
+    Set Item_To_Be_Saved_Open = Nothing
+'Debug.Print "############# " & "Save_Outlook_Item"
+'Debug.Print "Outlook_Item_Input: " & Outlook_Item_Input
+'Debug.Print "Resave: " & Resave
+'Debug.Print "Item_Status: " & Item_Status
+'Debug.Print "Unread: " & Unread
+'Debug.Print "Save_Result: " & Save_Result
+'Debug.Print Save_Path_Name & Save_File_Name
+'Debug.Print "############# " & "Save_Outlook_Item"
 End Sub
