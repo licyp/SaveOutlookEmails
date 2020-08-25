@@ -1,133 +1,132 @@
-Attribute VB_Name = "Function_Validation"
 Option Explicit
 'These are the used validations
 
 Public fso As Scripting.FileSystemObject ' add MS scripting Runtime
 
-Function ValidOutlookFolder(ValidOutlookFolderInput As Outlook.MAPIFolder) As Boolean
+Function Valid_Outlook_Folder(Valid_Outlook_Folder_Input As Outlook.MAPIFolder) As Boolean
 'Checks Outlook folder validity based on invalid folders defined in Config sub
-Dim FolderName As String
+Dim Folder_Name As String
 Dim i As Double
-Dim NumberOfInvalidFolders As Double
-    NumberOfInvalidFolders = UBound(InvalidFolders) - LBound(InvalidFolders)
-    FolderName = ValidOutlookFolderInput.Name
-    ValidOutlookFolder = True
-    For i = 0 To NumberOfInvalidFolders
-        If UCase(FolderName) = UCase(InvalidFolders(i)) Then
-            ValidOutlookFolder = False
+Dim Number_Of_Invalid_Folders As Double
+    Number_Of_Invalid_Folders = UBound(Invalid_Folders) - LBound(Invalid_Folders)
+    Folder_Name = Valid_Outlook_Folder_Input.Name
+    Valid_Outlook_Folder = True
+    For i = 0 To Number_Of_Invalid_Folders
+        If UCase(Folder_Name) = UCase(Invalid_Folders(i)) Then
+            Valid_Outlook_Folder = False
         End If
     Next
-'Debug.Print "############# " & "ValidOutlookFolder"
-'Debug.Print "ValidOutlookFolderInput: " & ValidOutlookFolderInput
-'Debug.Print "ValidOutlookFolder: " & ValidOutlookFolder
-'Debug.Print "############# " & "ValidOutlookFolder"
+'Debug.Print "############# " & "Valid_Outlook_Folder"
+'Debug.Print "Valid_Outlook_Folder_Input: " & Valid_Outlook_Folder_Input
+'Debug.Print "Valid_Outlook_Folder: " & Valid_Outlook_Folder
+'Debug.Print "############# " & "Valid_Outlook_Folder"
 End Function
 
-Function ValidOutlookItem(ValidOutlookItemInput) As Boolean 'As Outlook.MailItem)
+Function Valid_Outlook_Item(Valid_Outlook_Item_Input) As Boolean 'As Outlook.MailItem)
 'Checks Outlook item validity based on valid items defined in Config sub
-Dim ItemName As String
+Dim Item_Name As String
 Dim i As Double
-Dim NumberOfValidItems As Double
-    NumberOfValidItems = UBound(ValidItems) - LBound(ValidItems)
-    ItemName = ValidOutlookItemInput.MessageClass
-    ValidOutlookItem = False
-    For i = 0 To NumberOfValidItems
-        If UCase(Left(ItemName, Len(ValidItems(i)))) = UCase(ValidItems(i)) Then
-            ValidOutlookItem = True
+Dim Number_Of_Valid_Items As Double
+    Number_Of_Valid_Items = UBound(Valid_Items) - LBound(Valid_Items)
+    Item_Name = Valid_Outlook_Item_Input.MessageClass
+    Valid_Outlook_Item = False
+    For i = 0 To Number_Of_Valid_Items
+        If UCase(Left(Item_Name, Len(Valid_Items(i)))) = UCase(Valid_Items(i)) Then
+            Valid_Outlook_Item = True
         End If
     Next
-'Debug.Print "############# " & "ValidOutlookItem"
-'Debug.Print "ValidOutlookItemInput: " & ValidOutlookItemInput
-'Debug.Print "ValidOutlookItem: " & ValidOutlookItem
-'Debug.Print "############# " & "ValidOutlookItem"
+'Debug.Print "############# " & "Valid_Outlook_Item"
+'Debug.Print "Valid_Outlook_Item_Input: " & Valid_Outlook_Item_Input
+'Debug.Print "Valid_Outlook_Item: " & Valid_Outlook_Item
+'Debug.Print "############# " & "Valid_Outlook_Item"
 End Function
 
-Function ArchivedOutlookItem(ArchivedOutlookItemInput) As Boolean 'As Outlook.MailItem)
+Function Archived_Outlook_Item(Archived_Outlook_Item_Input) As Boolean 'As Outlook.MailItem)
 'Checks Archived Outlook item based on archived items defined in Config sub
-Dim ItemName As String
+Dim Item_Name As String
 Dim i As Double
-Dim NumberOfArchivedItems As Double
-    NumberOfArchivedItems = UBound(ArchivedArray) - LBound(ArchivedArray)
-    ItemName = ArchivedOutlookItemInput.MessageClass
-    ArchivedOutlookItem = False
-    For i = 0 To NumberOfArchivedItems
-        If UCase(Right(ItemName, Len(ArchivedArray(i)))) = UCase(ArchivedArray(i)) Then
-            ArchivedOutlookItem = True
+Dim Number_Of_Archived_Items As Double
+    Number_Of_Archived_Items = UBound(Archived_Array) - LBound(Archived_Array)
+    Item_Name = Archived_Outlook_Item_Input.MessageClass
+    Archived_Outlook_Item = False
+    For i = 0 To Number_Of_Archived_Items
+        If UCase(Right(Item_Name, Len(Archived_Array(i)))) = UCase(Archived_Array(i)) Then
+            Archived_Outlook_Item = True
         End If
     Next
-'Debug.Print "############# " & "ValidOutlookItem"
-'Debug.Print "ArchivedOutlookItemInput: " & ArchivedOutlookItemInput
-'Debug.Print "ValidOutlookItem: " & ValidOutlookItem
-'Debug.Print "############# " & "ValidOutlookItem"
+'Debug.Print "############# " & "Valid_Outlook_Item"
+'Debug.Print "Archived_Outlook_Item_Input: " & Archived_Outlook_Item_Input
+'Debug.Print "Valid_Outlook_Item: " & Valid_Outlook_Item
+'Debug.Print "############# " & "Valid_Outlook_Item"
 End Function
 
-Sub FileExistsInLogOrHDD()
+Sub File_Exists_In_Log_Or_HDD()
 'Checks HDD for selected Outlook item (exact match) or log file (date time and partial subject match)
 Dim i As Double
-Dim ItemDate As String
-Dim LogDate As String
-Dim OverlapSubjectReal As Double
+Dim Item_Date As String
+Dim Log_Date As String
+Dim Overlap_Subject_Real As Double
     
     Set fso = New Scripting.FileSystemObject
-    OutlookItemSavedAlready = False
-    If AutoRun = False Then
-        If LastFoundWasAt = 0 Then
-            If FromNewToOld = False Then
-                LastFoundWasAt = LBound(ArchivedFileArray, 2)
+    Outlook_Item_Saved_Already = False
+    If Auto_Run = False Then
+        If Last_Found_Was_At = 0 Then
+            If From_New_To_Old = False Then
+                Last_Found_Was_At = LBound(Archived_File_Array, 2)
             Else
-                LastFoundWasAt = UBound(ArchivedFileArray, 2)
+                Last_Found_Was_At = UBound(Archived_File_Array, 2)
             End If
         End If
     Else
-        OutlookItemSavedAlready = fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1))
+        Outlook_Item_Saved_Already = fso.FileExists(Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1))
         Exit Sub
     End If
     
-    If ItemShortArray(0) = "" Then
-            OutlookItemSavedAlready = True
-            DateError = True
+    If Item_Short_Array(0) = "" Then
+            Outlook_Item_Saved_Already = True
+            Date_Error = True
             Exit Sub
     End If
     
-    ItemDate = TextToDateTime(ItemShortArray(0) & " ")
+    Item_Date = Text_To_Date_Time(Item_Short_Array(0) & " ")
     
-    If OverlapSubject > Len(ItemShortArray(1)) Then
-        OverlapSubjectReal = Len(ItemShortArray(1)) - 1
+    If Overlap_Subject > Len(Item_Short_Array(1)) Then
+        Overlap_Subject_Real = Len(Item_Short_Array(1)) - 1
     Else
-        OverlapSubjectReal = OverlapSubject
+        Overlap_Subject_Real = Overlap_Subject
     End If
     
-'Debug.Print "Looking for: " & ItemDate
-    If FromNewToOld = False Then
-        For i = LastFoundWasAt + 1 To UBound(ArchivedFileArray, 2)
-            If ArchivedFileArray(0, i) <> FileArrayHeading(0) Then
-                LogDate = TextToDateTime(ArchivedFileArray(0, i) & " ")
+'Debug.Print "Looking for: " & Item_Date
+    If From_New_To_Old = False Then
+        For i = Last_Found_Was_At + 1 To UBound(Archived_File_Array, 2)
+            If Archived_File_Array(0, i) <> File_Array_Heading(0) Then
+                Log_Date = Text_To_Date_Time(Archived_File_Array(0, i) & " ")
             Else
-                LogDate = ArchivedFileArray(0, i)
+                Log_Date = Archived_File_Array(0, i)
             End If
-'Debug.Print "Is it this one? " & ArchivedFileArray(0, i)
-            If IsDate(LogDate) Then
-                If DateValue(LogDate) = DateValue(ItemDate) And _
-                    TimeValue(LogDate) = TimeValue(ItemDate) Then
-                    If Left(ReplaceIllegalCharsFileFolderName(ItemShortArray(1) & " ", ReplaceCharBy, MaxFileNameLenght, False), OverlapSubjectReal) _
-                        = Left(ArchivedFileArray(1, i), OverlapSubjectReal) Then
-                        OutlookItemSavedAlready = True
-                        LastFoundWasAt = i
+'Debug.Print "Is it this one? " & Archived_File_Array(0, i)
+            If IsDate(Log_Date) Then
+                If DateValue(Log_Date) = DateValue(Item_Date) And _
+                    TimeValue(Log_Date) = TimeValue(Item_Date) Then
+                    If Left(Replace_Illegal_Chars_File_Folder_Name(Item_Short_Array(1) & " ", Replace_Char_By, Max_File_Name_Length, False), Overlap_Subject_Real) _
+                        = Left(Archived_File_Array(1, i), Overlap_Subject_Real) Then
+                        Outlook_Item_Saved_Already = True
+                        Last_Found_Was_At = i
                         Exit Sub
                     End If
                 End If
             End If
         Next
     Else
-        For i = LastFoundWasAt - 1 To LBound(ArchivedFileArray, 2) Step -1
-'Debug.Print "Is it this one? " & ArchivedFileArray(1, i)
-            If IsDate(ArchivedFileArray(1, i)) Then
-                If DateValue(ArchivedFileArray(1, i)) = DateValue(TextToDateTime(ItemShortArray(0) & " ")) And _
-                    TimeValue(ArchivedFileArray(1, i)) = TimeValue(TextToDateTime(ItemShortArray(0) & " ")) Then
-                    If Left(ReplaceIllegalCharsFileFolderName(ItemShortArray(1) & " ", ReplaceCharBy, MaxFileNameLenght, False), OverlapSubjectReal) _
-                        = Left(ArchivedFileArray(1, i), OverlapSubjectReal) Then
-                        OutlookItemSavedAlready = True
-                        LastFoundWasAt = i
+        For i = Last_Found_Was_At - 1 To LBound(Archived_File_Array, 2) Step -1
+'Debug.Print "Is it this one? " & Archived_File_Array(1, i)
+            If IsDate(Archived_File_Array(1, i)) Then
+                If DateValue(Archived_File_Array(1, i)) = DateValue(Text_To_Date_Time(Item_Short_Array(0) & " ")) And _
+                    TimeValue(Archived_File_Array(1, i)) = TimeValue(Text_To_Date_Time(Item_Short_Array(0) & " ")) Then
+                    If Left(Replace_Illegal_Chars_File_Folder_Name(Item_Short_Array(1) & " ", Replace_Char_By, Max_File_Name_Length, False), Overlap_Subject_Real) _
+                        = Left(Archived_File_Array(1, i), Overlap_Subject_Real) Then
+                        Outlook_Item_Saved_Already = True
+                        Last_Found_Was_At = i
                         Exit Sub
                     End If
                 End If
@@ -135,20 +134,20 @@ Dim OverlapSubjectReal As Double
         Next
     End If
     
-    If fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1)) = False Then
-        If FromNewToOld = False Then
-            LastFoundWasAt = LBound(ArchivedFileArray, 2)
+    If fso.FileExists(Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1)) = False Then
+        If From_New_To_Old = False Then
+            Last_Found_Was_At = LBound(Archived_File_Array, 2)
         Else
-            LastFoundWasAt = UBound(ArchivedFileArray, 2)
+            Last_Found_Was_At = UBound(Archived_File_Array, 2)
         End If
     Else
-        OutlookItemSavedAlready = fso.FileExists(ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1))
-        Call LogFileAddLine(ItemShortArray)
+        Outlook_Item_Saved_Already = fso.FileExists(Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1))
+        Call Log_File_Add_Line(Item_Short_Array)
         Exit Sub
     End If
 
-'Debug.Print "############# " & "FileExistsInLogOrHDD"
-'Debug.Print "OutlookItem: " & ItemShortArray(2) & ItemShortArray(0) & " - " & ItemShortArray(1)
-'Debug.Print "OutlookItemSavedAlready: " & OutlookItemSavedAlready
-'Debug.Print "############# " & "FileExistsInLogOrHDD"
+'Debug.Print "############# " & "File_Exists_In_Log_Or_HDD"
+'Debug.Print "OutlookItem: " & Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1)
+'Debug.Print "Outlook_Item_Saved_Already: " & Outlook_Item_Saved_Already
+'Debug.Print "############# " & "File_Exists_In_Log_Or_HDD"
 End Sub
