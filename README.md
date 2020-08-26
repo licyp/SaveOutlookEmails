@@ -45,7 +45,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 
 ![Microsoft Scripting Runtime](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/3%20Add%20Microsoft%20Scripting%20Runtime.gif)
 
-4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails Ver1.5.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.5.zip)
+4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails Ver1.5.zip](https://github.com/licyp/SaveOutlookEmails/raw/master/SaveOutlookEmails%20Ver1.5.zip)
 
 ![Copy Code](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/4%20Copy%20code%20files%20from%20Code.gif)
 
