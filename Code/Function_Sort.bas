@@ -1,4 +1,3 @@
-Attribute VB_Name = "Function_Sort"
 Option Explicit
 'http://www.vbforums.com/showthread.php?473677-VB6-Sorting-algorithms-(sort-array-sorting-arrays)&p=2909260#post2909260
 ' Sort a 2-dimensional array on either dimension
@@ -13,7 +12,7 @@ Public Sub QuickSort2(ByRef pvarArray As Variant, plngDim As Long, plngCol As Lo
     Dim lngLast As Long
     Dim varMid As Variant
     Dim varSwap As Variant
-    Dim c As Long
+    Dim C As Long
     Dim cMin As Long
     Dim cMax As Long
     
@@ -36,10 +35,10 @@ Public Sub QuickSort2(ByRef pvarArray As Variant, plngDim As Long, plngCol As Lo
                     lngLast = lngLast - 1
                 Loop
                 If lngFirst <= lngLast Then
-                    For c = cMin To cMax
-                        varSwap = pvarArray(c, lngFirst)
-                        pvarArray(c, lngFirst) = pvarArray(c, lngLast)
-                        pvarArray(c, lngLast) = varSwap
+                    For C = cMin To cMax
+                        varSwap = pvarArray(C, lngFirst)
+                        pvarArray(C, lngFirst) = pvarArray(C, lngLast)
+                        pvarArray(C, lngLast) = varSwap
                     Next
                     lngFirst = lngFirst + 1
                     lngLast = lngLast - 1
@@ -63,10 +62,10 @@ Public Sub QuickSort2(ByRef pvarArray As Variant, plngDim As Long, plngCol As Lo
                     lngLast = lngLast - 1
                 Loop
                 If lngFirst <= lngLast Then
-                    For c = cMin To cMax
-                        varSwap = pvarArray(lngFirst, c)
-                        pvarArray(lngFirst, c) = pvarArray(lngLast, c)
-                        pvarArray(lngLast, c) = varSwap
+                    For C = cMin To cMax
+                        varSwap = pvarArray(lngFirst, C)
+                        pvarArray(lngFirst, C) = pvarArray(lngLast, C)
+                        pvarArray(lngLast, C) = varSwap
                     Next
                     lngFirst = lngFirst + 1
                     lngLast = lngLast - 1
@@ -76,4 +75,3 @@ Public Sub QuickSort2(ByRef pvarArray As Variant, plngDim As Long, plngCol As Lo
             If lngFirst < plngRight Then QuickSort2 pvarArray, plngDim, plngCol, lngFirst, plngRight
     End Select
 End Sub
-
