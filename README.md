@@ -50,7 +50,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 ![Copy Code](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/4%20Copy%20code%20files%20from%20Code.gif)
 
 Note: if your IT system blocks the use of `bas` files, then:
-* Download a copy of the [CodeInText.zip](https://github.com/licyp/SaveOutlookEmails/raw/master/AllInText%20Ver1.5.zip).
+* Download a copy of the [AllInText.zip](https://github.com/licyp/SaveOutlookEmails/raw/master/AllInText%20Ver1.5.zip)
 * Drag and drop `BackBar.frm` and `BackupBar.frx`
 * Copy the content of `AllInText.txt`
 * Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
