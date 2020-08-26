@@ -50,13 +50,12 @@ Outlook's folder structure is kept the same and files are named with date-time p
 ![Copy Code](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/4%20Copy%20code%20files%20from%20Code.gif)
 
 Note: if your IT system blocks the use of `bas` files, then:
-
-   a. Download a copy of the CodeInText.zip.
-   b. Drag and drop `BackBar.frm` and `BackupBar.frx`
-   c. Copy the content of `ThisOutlookSession.txt` and paste it to ThisOutlookSession (as in gif above) 
-   d. Copy the content of `AllInText.txt`
-   e. Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
-   f. Paste the code there
+* Download a copy of the CodeInText.zip.
+* Drag and drop `BackBar.frm` and `BackupBar.frx`
+* Copy the content of `ThisOutlookSession.txt` and paste it to ThisOutlookSession (as in gif above) 
+* Copy the content of `AllInText.txt`
+* Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
+* Paste the code there
 
 5. Add auto run code to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
 
