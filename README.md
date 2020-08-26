@@ -52,7 +52,6 @@ Outlook's folder structure is kept the same and files are named with date-time p
 Note: if your IT system blocks the use of `bas` files, then:
 * Download a copy of the CodeInText.zip.
 * Drag and drop `BackBar.frm` and `BackupBar.frx`
-* Copy the content of `ThisOutlookSession.txt` and paste it to ThisOutlookSession (as in gif above) 
 * Copy the content of `AllInText.txt`
 * Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
 * Paste the code there
