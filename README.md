@@ -4,7 +4,7 @@ Save and backup Outlook accounts and items (emails, appointments, attachments et
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 ## Purpose
-In my Outlook only the last three months of emails are available offline, the rest are archived and moved into my [Online Archive - Name@Company.com](https://support.microsoft.com/en-gb/help/291626/how-to-manage-multiple-exchange-mailbox-accounts-in-outlook) account. Even when connected to the network the archived account only shows the first 200 odd characters of an email body and no attachments are available. This means that Outlook search won’t find anything from archived account.
+In my Outlook only the last three months of emails are available offline, the rest are archived and moved into my [Online Archive - Name@Company.com](https://support.microsoft.com/en-gb/help/291626/how-to-manage-multiple-exchange-mailbox-accounts-in-outlook) account. Even when connected to the network the archived account only shows the first 200 odd characters of an email body and no attachments are available. This means that Outlook search won’t find anything from the archived account.
 
 My solution to this problem is to save all emails from all accounts onto my desktop where I can perform search in Windows Explorer: search within emails body and in attachments.
 
@@ -27,8 +27,9 @@ Outlook's folder structure is kept the same and files are named with date-time p
 - All successfully saved emails are added to __Log.txt__
 
 ## Features
-- When auto run __SaveOutlookEmails__ items on local drive are checked using `fso.FileExists`. When the number of already saved emails reaches `Overlap_Resaved` and timeframe of already saved emails is over `Overlap_Days` then scanning emails will stop. Autorun won’t open emails as recent items are part of the offline Outlook database, including attachments.
+- When auto run __SaveOutlookEmails__ items on local drive are checked using `fso.FileExists`. When the number of already saved emails reaches `Overlap_Resaved` and the timeframe of already saved emails is over `Overlap_Days` then scanning emails will stop. Autorun won’t open emails as recent items are part of the offline Outlook database, including attachments.
 - When manually run on selected folders 'file exists' check is based on the _Log_ file. This check is a simple loop though the log array. After an email has been found then the next loop will start from where the previous has been found to shorten the loop time.
+- Configuration file is saved at C:\Users\{Your-Name}\SaveOutlookEmails.txt where the backup location can be updated (e.g. "C:\Users\{Your-Name}\OneDrive - {Company-Name}\eMails"); default location "C:\Users\{Your-Name}\Desktop\eMails".
 - It has been tested on Windows 7 and Windows 10, Outlook 2013 and Outlook 2016 versions.
 
 ## Install
@@ -38,23 +39,32 @@ Outlook's folder structure is kept the same and files are named with date-time p
 
 2. Check _Macro Settings_ in _Trust Canter_
 
-![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/2%20Check%20Macro%20Setting.gif)
+![Macro Settings](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/2%20Check%20Macro%20Setting.gif)
 
 3. Add _Microsoft Scripting Runtime_ in _VBA editor_
 
-![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/3%20Add%20Microsoft%20Scripting%20Runtime.gif)
+![Microsoft Scripting Runtime](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/3%20Add%20Microsoft%20Scripting%20Runtime.gif)
 
-4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.0.zip)
+4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails Ver1.5.zip](https://github.com/licyp/SaveOutlookEmails/blob/master/SaveOutlookEmails%20Ver1.5.zip)
 
-![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/4%20Copy%20code%20files%20from%20Code.gif)
+![Copy Code](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/4%20Copy%20code%20files%20from%20Code.gif)
+
+Note: if your IT system blocks the use of `bas` files, then:
+
+    1. Download a copy of the CodeInText.zip.
+    2. Drag and drop `BackBar.frm` and `BackupBar.frx`
+    3. Copy the content of `ThisOutlookSession.txt` and paste it to ThisOutlookSession (as in gif above) 
+    4. Copy the content of `AllInText.txt`
+    5. Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
+    6. Paste the code there
 
 5. Add auto run code to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
 
-![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/5%20Add%20auto%20run%20code.gif)
+![Auto Run](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/5%20Add%20auto%20run%20code.gif)
 
 6. Add _Quick Access_ icon
 
-![Add Developer Ribbon](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/6%20Add%20Quick%20Access%20icon.gif)
+![Quick Access](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/6%20Add%20Quick%20Access%20icon.gif)
 
 7. Hide _Developer_ ribbon
 
