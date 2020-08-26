@@ -29,7 +29,7 @@ Outlook's folder structure is kept the same and files are named with date-time p
 ## Features
 - When auto run __SaveOutlookEmails__ items on local drive are checked using `fso.FileExists`. When the number of already saved emails reaches `Overlap_Resaved` and the timeframe of already saved emails is over `Overlap_Days` then scanning emails will stop. Autorun won’t open emails as recent items are part of the offline Outlook database, including attachments.
 - When manually run on selected folders 'file exists' check is based on the _Log_ file. This check is a simple loop though the log array. After an email has been found then the next loop will start from where the previous has been found to shorten the loop time.
-- Configuration file is saved at C:\Users\{Your-Name}\SaveOutlookEmails.txt where the backup location can be updated (e.g. "C:\Users\{Your-Name}\OneDrive - {Company-Name}\eMails"); default location "C:\Users\{Your-Name}\Desktop\eMails".
+- Configuration file is saved at `C:\Users\{Your-Name}\SaveOutlookEmails.txt` where the backup location can be updated (e.g. `C:\Users\{Your-Name}\OneDrive - {Company-Name}\eMails`); default location `C:\Users\{Your-Name}\Desktop\eMails`.
 - It has been tested on Windows 7 and Windows 10, Outlook 2013 and Outlook 2016 versions.
 
 ## Install
@@ -51,12 +51,12 @@ Outlook's folder structure is kept the same and files are named with date-time p
 
 Note: if your IT system blocks the use of `bas` files, then:
 
-    1. Download a copy of the CodeInText.zip.
-    2. Drag and drop `BackBar.frm` and `BackupBar.frx`
-    3. Copy the content of `ThisOutlookSession.txt` and paste it to ThisOutlookSession (as in gif above) 
-    4. Copy the content of `AllInText.txt`
-    5. Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
-    6. Paste the code there
+   1. Download a copy of the CodeInText.zip.
+   2. Drag and drop `BackBar.frm` and `BackupBar.frx`
+   3. Copy the content of `ThisOutlookSession.txt` and paste it to ThisOutlookSession (as in gif above) 
+   4. Copy the content of `AllInText.txt`
+   5. Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
+   6. Paste the code there
 
 5. Add auto run code to [ThisOutlookSession](https://github.com/licyp/SaveOutlookEmails/blob/master/Code/ThisOutlookSession.txt)
 
