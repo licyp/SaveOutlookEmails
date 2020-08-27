@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} BackupBar 
    Caption         =   "Back Up Outlook"
-   ClientHeight    =   1545
+   ClientHeight    =   1548
    ClientLeft      =   120
-   ClientTop       =   450
-   ClientWidth     =   4755
+   ClientTop       =   456
+   ClientWidth     =   4752
    OleObjectBlob   =   "BackupBar.frx":0000
    ShowModal       =   0   'False
    StartUpPosition =   1  'CenterOwner
@@ -15,22 +15,23 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 Option Explicit
 
 Private Sub Cancel_Click()
-    EndCode = 1
-    Call CloseBackupProgressBar
+    End_Code = 1
+    Call Close_Backup_Progress_Bar
 End Sub
 
 Private Sub Userform_QueryClose(Cancel As Integer, CloseMode As Integer)
     If CloseMode = vbFormControlMenu Then
-        EndCode = 2
-        Call CloseBackupProgressBar
+        End_Code = 2
+        Call Close_Backup_Progress_Bar
     End If
 End Sub
 
 Private Sub LinkLink_Click()
-    Call OpenUrl(LinkToGitHub)
+    Call Open_Url(Link_To_Git_Hub)
 End Sub
 
 
