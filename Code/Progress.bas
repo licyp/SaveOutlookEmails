@@ -11,7 +11,7 @@ Private Declare Function ShellExecute _
   Optional ByVal Directory As String, _
   Optional ByVal WindowStyle As Long = vbMinimizedFocus _
   ) As Long
-  
+
 Public Sub Open_Url(Hyperlink As String)
     Dim lSuccess As Long
     lSuccess = ShellExecute(0, "Open", Hyperlink)
@@ -40,7 +40,7 @@ Dim Time_To_Go
     Text_Border = 3 'double for button
     Top_Border = 31
     Left_Border = 14
-    
+
     If Outlook_Item_Current_Count_Today = 1 Then
 '        With BackupBar
 '            .Top = Application.ActiveWindow.Top + 25
@@ -50,6 +50,10 @@ Dim Time_To_Go
         Item_Text = Outlook_Item_Input.Subject
     End If
     
+    If Outlook_Item_Current_Count_Today = 0 Then
+        Outlook_Item_Current_Count_Today = 1
+    End If
+
 'Title of user form
     With BackupBar
         .Caption = "Backing up: " & Outlook_Current_Folder 'update
@@ -185,7 +189,7 @@ Dim RGB_Step As Double
     Blue_Start = 41
     Blue_End = 118
     Blue_Scale = (Blue_End - Blue_Start) / RGB_Step
-    
+
     RGB_Step_Count = RGB_Step_Count + 1
     If RGB_Step_Count <= RGB_Step Then
         Green_RGB = Green_Start + Green_Scale * RGB_Step_Count
@@ -197,7 +201,7 @@ Dim RGB_Step As Double
             RGB_Step_Count = 0
         End If
     End If
-    
+
     If RGB_Step_Count <= RGB_Step Then
         Red_RGB = Red_Start + Red_Scale * RGB_Step_Count
     Else
@@ -208,7 +212,7 @@ Dim RGB_Step As Double
             RGB_Step_Count = 0
         End If
     End If
-    
+
     If RGB_Step_Count <= RGB_Step Then
         Blue_RGB = Blue_Start + Blue_Scale * RGB_Step_Count
     Else
