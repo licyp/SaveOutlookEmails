@@ -29,13 +29,13 @@ Dim Full_Item_Path As String
 Dim Clean_Item_Name As String
 Dim i As Double
 Dim Class_Check_Char As Double
-    
+
     On Error GoTo NetworkError
-    
+
     Set OL_Folder = Outlook_Folder_Input
     Set OL_Item = Outlook_Item_Input
     Class_Check_Char = 8
-    
+
     OL_Folder_Type_Valid = Valid_Outlook_Folder(OL_Folder)
 'Check validity
     If OL_Folder_Type_Valid = False Then
@@ -52,7 +52,7 @@ Dim Class_Check_Char As Double
     OL_Item_Title = OL_Item.Subject
     OL_Item_Size = OL_Item.Size
     OL_Item_Type = OL_Item.MessageClass 'Class
-    
+
     Select Case Left(OL_Item.MessageClass, Class_Check_Char)
         Case Left("IPM.Appointment", Class_Check_Char) 'Appointment
 'Debug.Print "RecurrenceState: " & OL_Item.RecurrenceState
@@ -188,7 +188,7 @@ Dim Class_Check_Char As Double
         GoTo NotValid:
     Else
     End If
-    
+
     Clean_Item_Name = Replace_Illegal_Chars_File_Folder_Name(OL_Item_Title, Replace_Char_By, Max_File_Name_Length, False)
     Full_Item_Path = HDD_Folder_Path & OL_Item_Date & " - " & Clean_Item_Name & ".msg"
     If Len(Full_Item_Path) > Max_Path_Length Then
@@ -229,7 +229,7 @@ Dim Class_Check_Char As Double
         End If
     Else
     End If
-    
+
     If OL_Item_To_Count > Max_Item_To Then
         OL_Item_To_Count_Valid = False
     Else
@@ -244,7 +244,7 @@ Dim Class_Check_Char As Double
         End If
     Else
     End If
-        
+
 NotValid:
     If Error_Type = "" Then
         Status = "Listed"
@@ -259,7 +259,7 @@ NotValid:
         OL_Item_Type, OL_Item_Type_Valid, OL_Item_Size, OL_Item_Size_Valid, _
         OL_Item_To_Count, OL_Item_To_Count_Valid, _
         HDD_Folder_Path, HDD_Item_Valid_Length)
-        
+
 NetworkError:
 If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
     MsgBox "Hmmm..., Add_To_Item_Array"
@@ -306,15 +306,15 @@ Dim i As Double
 Dim Class_Check_Char As Double
 
     On Error GoTo NetworkError
-    
+
     Set OL_Folder = Outlook_Folder_Input
     Set OL_Item = Outlook_Item_Input
     Class_Check_Char = 8
-    
+
     OL_Item_Title = OL_Item.Subject
     OL_Item_Type = OL_Item.MessageClass 'Class
     HDD_Folder_Path = Default_Backup_Location & "\" & Clean_Outlook_Full_Path_Name(OL_Folder) & "\"
-    
+
     Select Case Left(OL_Item.MessageClass, Class_Check_Char)
         Case Left("IPM.Appointment", Class_Check_Char) 'Appointment
 'Debug.Print "RecurrenceState: " & OL_Item.RecurrenceState
@@ -338,11 +338,11 @@ Dim Class_Check_Char As Double
                 Format(OL_Item.StartDate, "hhnnss", vbUseSystemDayOfWeek, vbUseSystem)
         Case Else
     End Select
-    
+
     Clean_Item_Name = Replace_Illegal_Chars_File_Folder_Name(OL_Item_Title, Replace_Char_By, Max_File_Name_Length, False) & ".msg"
 
     Item_Short_Array = Array(OL_Item_Date, Clean_Item_Name, HDD_Folder_Path)
-    
+
 NetworkError:
 If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
     MsgBox "Hmmm..., Add_To_Short_Item_Array"
@@ -386,7 +386,7 @@ Dim Array_Heading As Variant
     Where = File_Name
     ReDim Array_Heading(UBound(Heading))
     Array_Heading = Heading
-    
+
     If fso.FileExists(File_Name) = False Then
         File_Number = FreeFile
         Where = File_Name
@@ -531,7 +531,7 @@ Dim Col As Double
 Dim Temp_Array As Variant
 Dim Array_Row_Size As Double
 Dim Array_Column_Size As Double
-    
+
     New_Line = NewArray_Line
     Array_Row_Size = UBound(New_Line)
     If IsEmpty(Archived_File_Array) Then
@@ -571,11 +571,11 @@ Dim Array_Value As String
 Dim Whole_Line As String
 Dim Where As String
 Dim File_Number As Double
-    
+
     File_Number = FreeFile
     Where = File_Name
     Open Where For Output Access Write As #File_Number
-    
+
     HDD_File_Count = UBound(Archived_File_Array, 2) + 1
     For Columns = LBound(Archived_File_Array, 2) To UBound(Archived_File_Array, 2)
         Whole_Line = ""
@@ -614,16 +614,19 @@ Dim Temp_Array As Variant
 Dim Array_Row_Size As Double
 Dim Array_Column_Size As Double
 
+StartAgain:
     File_Number = FreeFile
     Where = File_Name
-    
+
+'On Error GoTo ResetLog
+
     Array_Row_Size = UBound(File_Array_Heading)
     ReDim New_Line(Array_Row_Size)
-    
+
     Open Where For Input As #File_Number
     Do Until EOF(1)
         Line Input #File_Number, Whole_Line
-
+On Error GoTo ResetLog
         For Col = 0 To Array_Row_Size
             If Col = 0 Then
                 Col_Start = 1
@@ -659,7 +662,18 @@ Dim Array_Column_Size As Double
 '            Debug.Print Archived_File_Array(j, i)
 '        Next
     Loop
+ResetLog:
     Close #File_Number
+
+    If Err.Number = 0 Then
+    Else
+'Debug.Print Err.Number
+'Debug.Print Err.Description
+        Err.Clear
+        Call Rebuild_Log_File
+        GoTo StartAgain
+    End If
+    
 'Debug.Print "ReadIn: end: " & Now()
 'Debug.Print "############# " & "Read_HDD_In_As_Array"
 'Debug.Print "UBound(Archived_File_Array, 1): " & UBound(Archived_File_Array, 1)
@@ -684,10 +698,10 @@ Dim Temp_Array As Variant
 Dim New_Line As Variant
 Dim Row As Double
 Dim Col As Double
-   
+
     If IsEmpty(Archived_File_Array) Then
-        Call Wipe_Me_Clean
-        Call Set_Config
+'        Call Wipe_Me_Clean
+'        Call Set_Config
         If File_Name = Empty Then
             Where = Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt"
         Else
@@ -702,7 +716,7 @@ Dim Col As Double
             Where = File_Name
         End If
     End If
-    
+
     Call QuickSort2(Archived_File_Array, 1, 0)
 
     For i = UBound(Archived_File_Array, 2) To 1 Step -1
@@ -726,10 +740,10 @@ ResaveFile:
         Next
         Call Add_To_HDD_Array(New_Line)
     Next
-    
+
     Call Log_HDD_File_In_One_Vertical(Where)
     Unload BackupBar
-    Call Wipe_Me_Clean
+'    Call Wipe_Me_Clean
 'Debug.Print "############# " & "Rebuild_Log_File"
 'Debug.Print "UBound(Archived_File_Array, 1): " & UBound(Archived_File_Array, 1)
 'Debug.Print "UBound(Archived_File_Array, 2): " & UBound(Archived_File_Array, 2)
@@ -792,7 +806,7 @@ Dim Class_Check_Char As Double
 Dim i As Double
 
     On Error GoTo NetworkError
-    
+
     Set OL_Folder = Outlook_Folder_Input
     Set OL_Item = Outlook_Item_Input
     Class_Check_Char = 8
@@ -823,7 +837,7 @@ Dim i As Double
     End Select
 
     Item_Date_Only = Text_To_Date_Time(OL_Item_Date)
-    
+
 NetworkError:
 If Err.Number <> 0 And Left(Err.Description, Len("Network")) = "Network" Then
     MsgBox "Hmmm..., Add_To_Short_Item_DateArray"
