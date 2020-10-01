@@ -13,7 +13,7 @@ Dim Sub_Folder_Loop As Outlook.MAPIFolder
     Else
     End If
 'Process all folders and subfolders recursively
-    If Folder_Loop.Folders.Count Then
+    If Folder_Loop.Folders.Count And Valid_Outlook_Folder(Folder_Loop) = True Then
        For Each Sub_Folder_Loop In Folder_Loop.Folders
            Call Create_HDD_Folder_For_Outlook_Folder(Sub_Folder_Loop)
        Next
