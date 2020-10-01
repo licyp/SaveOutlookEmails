@@ -300,7 +300,6 @@ Back_Up_Main_Account:
 
     Call Set_Backup_Progress_Bar_Data
     Set Outlook_Main_Folder = Top_Outlook_Folder(Outlook_Current_Folder)
-
     Call Outlook_Folder_Item_Count(Outlook_Current_Folder)
     Call Create_HDD_Folder_For_Outlook_Folder(Outlook_Current_Folder)
     Call HDD_Folder_Item_Count(Default_Backup_Location & "\" & Clean_Outlook_Full_Path_Name(Outlook_Current_Folder))
@@ -357,17 +356,28 @@ End Sub
 Sub MsgBox_All_Done()
     Dim Ask_Time As Integer
     Dim Info_Box As Object
-
     Set Info_Box = CreateObject("WScript.Shell")
 
     'Set the message box to close after 1 seconds
     Ask_Time = 1
-    Select Case Info_Box.Popup("All done", Ask_Time, "All done", 0)
+    Select Case Info_Box.Popup("All done." & vbNewLine & "This window will automatically close", Ask_Time, "All done", 0)
         Case 1, -1
             Exit Sub
     End Select
 End Sub
 
+Sub MsgBox_Delay_Start()
+    Dim Ask_Time As Integer
+    Dim Info_Box As Object
+    Set Info_Box = CreateObject("WScript.Shell")
+
+    'Set the message box to close after 1 seconds
+    Ask_Time = 1
+    Select Case Info_Box.Popup("Wait for Outlook to connect..." & vbNewLine & "This window will automatically close.", Ask_Time, "Delayed Start", 0)
+        Case 1, -1
+            Exit Sub
+    End Select
+End Sub
 
 Sub Loop_Outlook_Folders(Loop_Outlook_Folders_Input As Outlook.MAPIFolder, Save_Item As Boolean)
 Dim Folder_Loop As Outlook.MAPIFolder
@@ -523,7 +533,7 @@ NextItemNO:
     Else
     End If
 'Process all folders and subfolders recursively
-    If Folder_Loop.Folders.Count Then
+    If Folder_Loop.Folders.Count And Valid_Outlook_Folder(Folder_Loop) = True Then
        For Each Sub_Folder_Loop In Folder_Loop.Folders
            Call Loop_Outlook_Folders(Sub_Folder_Loop, Save_Item)
        Next
@@ -662,7 +672,7 @@ Function Replace_Illegal_Chars_File_Folder_Name(To_Check_Name As String, Replace
 Dim Suffix_Length As Double
 Dim Working_String As String
     Working_String = To_Check_Name
-
+    
 'Replace illegal characters
     Working_String = Replace(Working_String, "*", Replace_By) '(asterisk)
     Working_String = Replace(Working_String, "/", Replace_By) '(forward slash)
@@ -683,7 +693,7 @@ Dim Working_String As String
     Working_String = Replace(Working_String, Chr(10), Replace_By) '(line feed)
     Working_String = Replace(Working_String, Chr(13), Replace_By) '(carriage return)
     Working_String = Replace(Working_String, Chr(9), Replace_By) '(horizontal tabulation)
-
+    
 'Clean up Replace_By mess and double spaces
     Do While InStr(1, Working_String, Replace_By & " " & Replace_By) <> 0 Or _
             InStr(1, Working_String, Replace_By & Replace_By) <> 0 Or _
@@ -692,7 +702,7 @@ Dim Working_String As String
         Working_String = Replace(Working_String, Replace_By & Replace_By, Replace_By)
         Working_String = Replace(Working_String, "  ", " ")
     Loop
-
+    
 'Shorten name and add suffix
     Suffix_Length = Len(Suffix_Text)
     If Len(Working_String) >= Max_Length + 1 Then
@@ -785,7 +795,7 @@ Dim Sub_Folder_Loop As Outlook.MAPIFolder
     Else
     End If
 'Process all folders and subfolders recursively
-    If Folder_Loop.Folders.Count Then
+    If Folder_Loop.Folders.Count And Valid_Outlook_Folder(Folder_Loop) = True Then
        For Each Sub_Folder_Loop In Folder_Loop.Folders
            Call Outlook_Folder_Item_Count(Sub_Folder_Loop)
        Next
@@ -839,7 +849,7 @@ Dim Sub_Folder_Loop As Outlook.MAPIFolder
     Else
     End If
 'Process all folders and subfolders recursively
-    If Folder_Loop.Folders.Count Then
+    If Folder_Loop.Folders.Count And Valid_Outlook_Folder(Folder_Loop) = True Then
        For Each Sub_Folder_Loop In Folder_Loop.Folders
            Call Create_HDD_Folder_For_Outlook_Folder(Sub_Folder_Loop)
        Next
@@ -1499,8 +1509,11 @@ Dim Temp_Array As Variant
 Dim Array_Row_Size As Double
 Dim Array_Column_Size As Double
 
+StartAgain:
     File_Number = FreeFile
     Where = File_Name
+
+'On Error GoTo ResetLog
 
     Array_Row_Size = UBound(File_Array_Heading)
     ReDim New_Line(Array_Row_Size)
@@ -1508,7 +1521,7 @@ Dim Array_Column_Size As Double
     Open Where For Input As #File_Number
     Do Until EOF(1)
         Line Input #File_Number, Whole_Line
-
+On Error GoTo ResetLog
         For Col = 0 To Array_Row_Size
             If Col = 0 Then
                 Col_Start = 1
@@ -1544,7 +1557,18 @@ Dim Array_Column_Size As Double
 '            Debug.Print Archived_File_Array(j, i)
 '        Next
     Loop
+ResetLog:
     Close #File_Number
+
+    If Err.Number = 0 Then
+    Else
+'Debug.Print Err.Number
+'Debug.Print Err.Description
+        Err.Clear
+        Call Rebuild_Log_File
+        GoTo StartAgain
+    End If
+    
 'Debug.Print "ReadIn: end: " & Now()
 'Debug.Print "############# " & "Read_HDD_In_As_Array"
 'Debug.Print "UBound(Archived_File_Array, 1): " & UBound(Archived_File_Array, 1)
@@ -1571,8 +1595,8 @@ Dim Row As Double
 Dim Col As Double
 
     If IsEmpty(Archived_File_Array) Then
-        Call Wipe_Me_Clean
-        Call Set_Config
+'        Call Wipe_Me_Clean
+'        Call Set_Config
         If File_Name = Empty Then
             Where = Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt"
         Else
@@ -1614,7 +1638,7 @@ ResaveFile:
 
     Call Log_HDD_File_In_One_Vertical(Where)
     Unload BackupBar
-    Call Wipe_Me_Clean
+'    Call Wipe_Me_Clean
 'Debug.Print "############# " & "Rebuild_Log_File"
 'Debug.Print "UBound(Archived_File_Array, 1): " & UBound(Archived_File_Array, 1)
 'Debug.Print "UBound(Archived_File_Array, 2): " & UBound(Archived_File_Array, 2)
@@ -1738,7 +1762,7 @@ Public Sub QuickSort2(ByRef pvarArray As Variant, plngDim As Long, plngCol As Lo
     Dim C As Long
     Dim cMin As Long
     Dim cMax As Long
-
+    
     cMin = LBound(pvarArray, plngDim)
     cMax = UBound(pvarArray, plngDim)
     Select Case plngDim
@@ -1870,7 +1894,7 @@ Dim i As Double
 Dim Item_Date As String
 Dim Log_Date As String
 Dim Overlap_Subject_Real As Double
-
+    
     Set fso = New Scripting.FileSystemObject
     Outlook_Item_Saved_Already = False
     If Auto_Run = False Then
@@ -1885,21 +1909,21 @@ Dim Overlap_Subject_Real As Double
         Outlook_Item_Saved_Already = fso.FileExists(Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1))
         Exit Sub
     End If
-
+    
     If Item_Short_Array(0) = "" Then
             Outlook_Item_Saved_Already = True
             Date_Error = True
             Exit Sub
     End If
-
+    
     Item_Date = Text_To_Date_Time(Item_Short_Array(0) & " ")
-
+    
     If Overlap_Subject > Len(Item_Short_Array(1)) Then
         Overlap_Subject_Real = Len(Item_Short_Array(1)) - 1
     Else
         Overlap_Subject_Real = Overlap_Subject
     End If
-
+    
 'Debug.Print "Looking for: " & Item_Date
     If From_New_To_Old = False Then
         For i = Last_Found_Was_At + 1 To UBound(Archived_File_Array, 2)
@@ -1937,7 +1961,7 @@ Dim Overlap_Subject_Real As Double
             End If
         Next
     End If
-
+    
     If fso.FileExists(Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1)) = False Then
         If From_New_To_Old = False Then
             Last_Found_Was_At = LBound(Archived_File_Array, 2)
@@ -2009,6 +2033,10 @@ Dim Time_To_Go
 '        End With
     Else
         Item_Text = Outlook_Item_Input.Subject
+    End If
+    
+    If Outlook_Item_Current_Count_Today = 0 Then
+        Outlook_Item_Current_Count_Today = 1
     End If
 
 'Title of user form
