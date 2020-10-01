@@ -88,7 +88,7 @@ Sub Wipe_Me_Clean()
     Set Outlook_Main_Folder = Nothing
     Set Outlook_Current_Folder = Nothing
     Set Outlook_Sub_Folder = Nothing
-    
+
     Outlook_Folder_Count = 0
     Outlook_Item_Count = 0
     HDD_Folder_Count = 0
@@ -106,7 +106,7 @@ End Sub
 Sub Set_Config()
 'Sets basic boundaries
     Set fso = New Scripting.FileSystemObject
-    
+
     Suffix_Text = "..."
     Replace_Char_By = "_"
     Separator_In_File = Chr(9)
@@ -119,7 +119,7 @@ Sub Set_Config()
     Overlap_Days = 7
     Overlap_Resaved = 100
     Overlap_Subject = 20
-    
+
     Default_Config_File = "SaveOutlookEmails.txt"
     Logged_In_User_File_Location = CStr(Environ("USERPROFILE"))
 '    Default_Folder = "Desktop\eMails"
@@ -186,7 +186,7 @@ Dim i As Integer
 'OL_FolderSentMail    5   Sent Mail   The Sent Mail folder.
 'OL_FolderTasks   13  Tasks   The Tasks folder.
 'OL_FolderToDo    28  To Do   The To Do folder.
-    
+
     Invalid_Folders = Array("Conflicts", "Contacts", "Journal", _
         "Junk E-Mail", "Local Failures", "RSS Feeds", "Server Failures", _
         "Suggested Contacts", "Sync Issues", "Recipient Cache") '"Deleted Items",
@@ -200,13 +200,13 @@ Dim i As Integer
         "Path on Drive", "Path Validity")
     File_Array_Heading = Array("Date", "Subject", "Path")
     Undeliverable_Error = "Undeliverable_"
-    
+
     Call Create_HDD_Folder(Default_Backup_Location_Log)
     Call Read_Last_Item_Date_Log(Default_Backup_Location_Log & "\" & Last_Saved_Item_Date_Log & ".txt")
 '    If fso.FileExists(Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt") = False Then
 '        Call Build_HDD_Array(Default_Backup_Location, Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt")
 '    End If
-        
+
 'Debug.Print "############# " & "Set_Config"
 End Sub
 
@@ -227,13 +227,13 @@ Dim Msg_Box_Response As Double
     Msg_Box_Text = "Do you want to reset log file?" & vbNewLine & vbNewLine & _
         "It will speed up scanning already saved files;" & vbNewLine & _
         "only needs doing when scan is slow."
-    
+
     Msg_Box_Response = MsgBox(Msg_Box_Text, Msg_Box_Buttons, Msg_Box_Title)
     If Msg_Box_Response = 6 Then
         Call Build_HDD_Array
     Else
     End If
-    
+
     Call Back_Up_Outlook_Folder(Auto_Run)
 End Sub
 
@@ -271,7 +271,7 @@ Back_Up_Main_Account:
         End Select
     Else
     End If
-    
+
 'Is chosen folder valid folder for backup?
     Msg_Box_Buttons = vbOKOnly + vbExclamation + vbDefaultButton1
     Msg_Box_Title = "Backup Outlook Folder"
@@ -284,7 +284,6 @@ Back_Up_Main_Account:
 
     Call Set_Backup_Progress_Bar_Data
     Set Outlook_Main_Folder = Top_Outlook_Folder(Outlook_Current_Folder)
-    
     Call Outlook_Folder_Item_Count(Outlook_Current_Folder)
     Call Create_HDD_Folder_For_Outlook_Folder(Outlook_Current_Folder)
     Call HDD_Folder_Item_Count(Default_Backup_Location & "\" & Clean_Outlook_Full_Path_Name(Outlook_Current_Folder))
@@ -293,7 +292,7 @@ Back_Up_Main_Account:
     Call Log_File_Open(Default_Backup_Location_Log & "\" & Log_File_Sum & ".txt")
     Call Loop_Outlook_Folders(Outlook_Current_Folder, Save_Items_To_HDD)
     Call Log_File_Close
-    
+
     Select Case End_Code
         Case 1
             Unload BackupBar
@@ -317,12 +316,12 @@ Back_Up_Main_Account:
 '                MsgBox "All done"
             End If
     End Select
-    
+
     If Auto_Run = False Then
         Call Log_Last_Item_Checked(Default_Backup_Location_Log & "\" & Last_Saved_Item_Date_Log & ".txt")
     End If
     Call Wipe_Me_Clean
-    
+
 'Debug.Print "############# " & "Back_Up_Outlook_Folder"
 'Debug.Print "Outlook_Account_Folder: " & Outlook_Account_Folder
 'Debug.Print "Msg_Box_Response: " & Msg_Box_Response
@@ -341,17 +340,28 @@ End Sub
 Sub MsgBox_All_Done()
     Dim Ask_Time As Integer
     Dim Info_Box As Object
-    
     Set Info_Box = CreateObject("WScript.Shell")
-    
+
     'Set the message box to close after 1 seconds
     Ask_Time = 1
-    Select Case Info_Box.Popup("All done", Ask_Time, "All done", 0)
+    Select Case Info_Box.Popup("All done." & vbNewLine & "This window will automatically close", Ask_Time, "All done", 0)
         Case 1, -1
             Exit Sub
     End Select
 End Sub
 
+Sub MsgBox_Delay_Start()
+    Dim Ask_Time As Integer
+    Dim Info_Box As Object
+    Set Info_Box = CreateObject("WScript.Shell")
+
+    'Set the message box to close after 1 seconds
+    Ask_Time = 1
+    Select Case Info_Box.Popup("Wait for Outlook to connect..." & vbNewLine & "This window will automatically close.", Ask_Time, "Delayed Start", 0)
+        Case 1, -1
+            Exit Sub
+    End Select
+End Sub
 
 Sub Loop_Outlook_Folders(Loop_Outlook_Folders_Input As Outlook.MAPIFolder, Save_Item As Boolean)
 Dim Folder_Loop As Outlook.MAPIFolder
@@ -507,7 +517,7 @@ NextItemNO:
     Else
     End If
 'Process all folders and subfolders recursively
-    If Folder_Loop.Folders.Count Then
+    If Folder_Loop.Folders.Count And Valid_Outlook_Folder(Folder_Loop) = True Then
        For Each Sub_Folder_Loop In Folder_Loop.Folders
            Call Loop_Outlook_Folders(Sub_Folder_Loop, Save_Item)
        Next
@@ -589,7 +599,7 @@ On Error GoTo SkipError
             Save_Result = "Saved"
         End If
     End If
-    
+
 SkipError:
 If Err.Number <> 0 Then
     Error_Skip_Code = Err.Number & " " & Err.Description
