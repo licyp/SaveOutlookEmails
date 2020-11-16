@@ -45,12 +45,12 @@ Outlook's folder structure is kept the same and files are named with date-time p
 
 ![Microsoft Scripting Runtime](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/3%20Add%20Microsoft%20Scripting%20Runtime.gif)
 
-4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails Ver1.8.zip](https://github.com/licyp/SaveOutlookEmails/raw/master/SaveOutlookEmails%20Ver1.8.zip)
+4. Copy code files from [Code](https://github.com/licyp/SaveOutlookEmails/tree/master/Code) or [SaveOutlookEmails Ver1.9.zip](https://github.com/licyp/SaveOutlookEmails/raw/master/SaveOutlookEmails%20Ver1.9.zip)
 
 ![Copy Code](https://github.com/licyp/SaveOutlookEmails/blob/master/Gif/4%20Copy%20code%20files%20from%20Code.gif)
 
 Note: if your IT system blocks the use of `bas` files, then:
-* Download a copy of the [AllInText Ver1.8.zip](https://github.com/licyp/SaveOutlookEmails/raw/master/AllInText%20Ver1.8.zip)
+* Download a copy of the [AllInText Ver1.9.zip](https://github.com/licyp/SaveOutlookEmails/raw/master/AllInText%20Ver1.9.zip)
 * Drag and drop `BackBar.frm` and `BackupBar.frx`
 * Copy the content of `AllInText.txt`
 * Create a new module: in VBA editor `[Menu bar\ Insert\ Module]`
@@ -82,5 +82,5 @@ Click on _'End'_, restart Outlook and try to run __SaveOutlookEmails__ again lat
 - Overlap subject: `Overlap_Subject = 20` is used to left-compare email subject and file name
 - Default folder on desktop: `Defult_Folder = "Desktop\eMails"`
 
-###### Current version: 1.8
+###### Current version: 1.9
 ###### [VBA - Visual Basic for Applications](https://docs.microsoft.com/en-us/office/vba/api/overview/outlook)
