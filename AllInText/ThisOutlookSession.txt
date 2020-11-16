@@ -4,3 +4,10 @@ Private Sub Application_Startup()
     Auto_Run = True
     Call Back_Up_Outlook_Folder(True)
 End Sub
+
+Private Sub Application_Quit()
+    End_Message = False
+    From_New_To_Old = True
+    Auto_Run = True
+    Call Back_Up_Outlook_Folder(True)
+End Sub
