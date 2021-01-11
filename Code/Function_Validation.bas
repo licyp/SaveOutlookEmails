@@ -66,7 +66,7 @@ Dim i As Double
 Dim Item_Date As String
 Dim Log_Date As String
 Dim Overlap_Subject_Real As Double
-    
+
     Set fso = New Scripting.FileSystemObject
     Outlook_Item_Saved_Already = False
     If Auto_Run = False Then
@@ -81,21 +81,21 @@ Dim Overlap_Subject_Real As Double
         Outlook_Item_Saved_Already = fso.FileExists(Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1))
         Exit Sub
     End If
-    
+
     If Item_Short_Array(0) = "" Then
             Outlook_Item_Saved_Already = True
             Date_Error = True
             Exit Sub
     End If
-    
+
     Item_Date = Text_To_Date_Time(Item_Short_Array(0) & " ")
-    
+
     If Overlap_Subject > Len(Item_Short_Array(1)) Then
         Overlap_Subject_Real = Len(Item_Short_Array(1)) - 1
     Else
         Overlap_Subject_Real = Overlap_Subject
     End If
-    
+
 'Debug.Print "Looking for: " & Item_Date
     If From_New_To_Old = False Then
         For i = Last_Found_Was_At + 1 To UBound(Archived_File_Array, 2)
@@ -133,7 +133,7 @@ Dim Overlap_Subject_Real As Double
             End If
         Next
     End If
-    
+
     If fso.FileExists(Item_Short_Array(2) & Item_Short_Array(0) & " - " & Item_Short_Array(1)) = False Then
         If From_New_To_Old = False Then
             Last_Found_Was_At = LBound(Archived_File_Array, 2)

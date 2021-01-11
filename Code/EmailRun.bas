@@ -116,8 +116,8 @@ Sub Set_Config()
     Max_Path_Length = 240
     Max_Item_To = 250
     Max_Item_Size = 25000000 '25MB
-    Overlap_Days = 7
-    Overlap_Resaved = 100
+    Overlap_Days = 30
+    Overlap_Resaved = 200
     Overlap_Subject = 20
 
     Default_Config_File = "SaveOutlookEmails.txt"
@@ -143,6 +143,15 @@ Dim i As Integer
             End If
         Loop
         Close #File_Number
+        
+        Open Where For Output Access Write As #File_Number
+            Print #File_Number, Default_Backup_Location
+            Print #File_Number, ""
+            Print #File_Number, "The first line is used for SaveOutlookEmails backup location."
+            Print #File_Number, "It should look like:"
+            Print #File_Number, "C:\Users\[Your-Name]\Desktop\eMails"
+            Print #File_Number, "C:\Users[Your-Name]\OneDrive - [Company-Name]\eMails"
+        Close #File_Number
     Else
         Default_Folder = "Desktop\eMails"
         Default_Backup_Location = Logged_In_User_File_Location & "\" & Default_Folder
@@ -150,7 +159,7 @@ Dim i As Integer
         Open Where For Output Access Write As #File_Number
             Print #File_Number, Default_Backup_Location
             Print #File_Number, ""
-            Print #File_Number, "The first lice is used for SaveOutlookEmails bakcup location."
+            Print #File_Number, "The first line is used for SaveOutlookEmails backup location."
             Print #File_Number, "It should look like:"
             Print #File_Number, "C:\Users\[Your-Name]\Desktop\eMails"
             Print #File_Number, "C:\Users[Your-Name]\OneDrive - [Company-Name]\eMails"
@@ -238,8 +247,25 @@ Dim Msg_Box_Response As Double
 End Sub
 
 Sub Back_Up_Outlook_Folder(Optional Auto_Run As Boolean)
+    Dim Ask_Time As Integer
+    Dim Info_Box As Object
+
     Call Wipe_Me_Clean
     Call Set_Config
+    
+'To check profile
+    If Len(Outlook_Account_Folder) <= 2 Then
+        Set Info_Box = CreateObject("WScript.Shell")
+        'Set the message box to close after 1 seconds
+        Ask_Time = 1
+        Select Case Info_Box.Popup("Please wait for the User Profile Service" & vbNewLine & _
+        "This window will automatically close", Ask_Time, "User Profile", 0)
+            Case 1, -1
+        End Select
+    Else
+    End If
+       
+    
 Dim Msg_Box_Title As String
 Dim Msg_Box_Buttons As String
 Dim Msg_Box_Text As String
@@ -517,7 +543,8 @@ NextItemNO:
     Else
     End If
 'Process all folders and subfolders recursively
-    If Folder_Loop.Folders.Count And Valid_Outlook_Folder(Folder_Loop) = True Then
+'    If Folder_Loop.Folders.Count And Valid_Outlook_Folder(Folder_Loop) = True Then
+    If Folder_Loop.Folders.Count Then
        For Each Sub_Folder_Loop In Folder_Loop.Folders
            Call Loop_Outlook_Folders(Sub_Folder_Loop, Save_Item)
        Next

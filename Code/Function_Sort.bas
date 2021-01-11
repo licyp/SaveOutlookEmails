@@ -15,7 +15,7 @@ Public Sub QuickSort2(ByRef pvarArray As Variant, plngDim As Long, plngCol As Lo
     Dim C As Long
     Dim cMin As Long
     Dim cMax As Long
-    
+
     cMin = LBound(pvarArray, plngDim)
     cMax = UBound(pvarArray, plngDim)
     Select Case plngDim

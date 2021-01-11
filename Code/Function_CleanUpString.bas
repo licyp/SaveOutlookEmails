@@ -31,7 +31,7 @@ Function Replace_Illegal_Chars_File_Folder_Name(To_Check_Name As String, Replace
 Dim Suffix_Length As Double
 Dim Working_String As String
     Working_String = To_Check_Name
-    
+
 'Replace illegal characters
     Working_String = Replace(Working_String, "*", Replace_By) '(asterisk)
     Working_String = Replace(Working_String, "/", Replace_By) '(forward slash)
@@ -52,7 +52,7 @@ Dim Working_String As String
     Working_String = Replace(Working_String, Chr(10), Replace_By) '(line feed)
     Working_String = Replace(Working_String, Chr(13), Replace_By) '(carriage return)
     Working_String = Replace(Working_String, Chr(9), Replace_By) '(horizontal tabulation)
-    
+
 'Clean up Replace_By mess and double spaces
     Do While InStr(1, Working_String, Replace_By & " " & Replace_By) <> 0 Or _
             InStr(1, Working_String, Replace_By & Replace_By) <> 0 Or _
@@ -61,7 +61,7 @@ Dim Working_String As String
         Working_String = Replace(Working_String, Replace_By & Replace_By, Replace_By)
         Working_String = Replace(Working_String, "  ", " ")
     Loop
-    
+
 'Shorten name and add suffix
     Suffix_Length = Len(Suffix_Text)
     If Len(Working_String) >= Max_Length + 1 Then
