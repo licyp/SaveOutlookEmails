@@ -5,7 +5,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} BackupBar
    ClientLeft      =   120
    ClientTop       =   456
    ClientWidth     =   4752
-   OleObjectBlob   =   "BackupBar.frx":0000
+   OleObjectBlob   =   "expBackupBar.frx":0000
    ShowModal       =   0   'False
    StartUpPosition =   1  'CenterOwner
 End
